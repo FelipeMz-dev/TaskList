@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="surfie_green">#0d6b87</color>
+    <color name="tradewind">#5fb4b4</color>
+    <color name="ziggurat">#b2dcda</color>
+    <color name="wheat">#f6e8b1</color>
+    <color name="apricot">#ed8b64</color>
+
+</resources>

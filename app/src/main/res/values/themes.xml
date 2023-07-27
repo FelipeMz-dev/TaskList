@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.TaskList" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/tradewind</item>
+        <item name="colorPrimaryVariant">@color/tradewind</item>
+        <item name="colorOnPrimary">@color/wheat</item>
+
+        <item name="colorSecondary">@color/apricot</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+</resources>

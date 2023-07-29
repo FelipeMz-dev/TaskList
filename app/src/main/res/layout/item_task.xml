@@ -18,16 +18,19 @@
             android:id="@+id/cbTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            app:buttonTint="@color/white"
+            android:checked="true"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tvTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="The first task"
+            android:layout_marginVertical="2dp"
+            android:maxHeight="100dp"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            tools:text="The first task" />
 
     </LinearLayout>
 

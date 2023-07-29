@@ -11,4 +11,7 @@
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="task_saved">Task saved</string>
+    <string name="task_updated">Task updated</string>
+    <string name="task_deleted">Task deleted</string>
 </resources>

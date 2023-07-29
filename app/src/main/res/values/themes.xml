@@ -9,6 +9,7 @@
         <item name="colorSecondary">@color/apricot</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
     </style>
 
 </resources>

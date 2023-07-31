@@ -1,4 +1,4 @@
-package com.example.tasklist.RecyclerView
+package com.example.tasklist.View.RecyclerView
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

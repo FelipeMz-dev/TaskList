@@ -3,16 +3,26 @@ package com.example.tasklist.View
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Database
 import androidx.room.Room
-import com.example.tasklist.DataBase.Entities.TaskEntity
+import com.example.tasklist.Data.DataBase.Dao.TaskDao
+import com.example.tasklist.Data.Entities.TaskEntity
 import com.example.tasklist.R
-import com.example.tasklist.RecyclerView.Adapter.TaskAdapter
-import com.example.tasklist.DataBase.TaskDataBase
-import com.example.tasklist.RecyclerView.Adapter.TaskAdapter.OnItemClickListener
-import com.example.tasklist.RecyclerView.SwipeToDeleteCallback
+import com.example.tasklist.View.RecyclerView.Adapter.TaskAdapter
+import com.example.tasklist.Data.DataBase.TaskDataBase
+import com.example.tasklist.TaskRepository
+import com.example.tasklist.TaskViewModel
+import com.example.tasklist.TaskViewModelFactory
+import com.example.tasklist.View.RecyclerView.Adapter.TaskAdapter.OnItemClickListener
+import com.example.tasklist.View.RecyclerView.SwipeToDeleteCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.concurrent.Executors
 
@@ -30,8 +40,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initComponents()
-        //loadDataTasks()
         initUI()
+    }
+
+    private val viewModel: TaskViewModel by viewModels {
+        TaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -42,22 +55,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadDataTasks() {
-        Executors.newSingleThreadExecutor().execute {
+        viewModel.getAllData().observe(this, Observer{ value ->
             listTask.clear()
-            listTask.addAll(dataBase.taskDao().getAllTasks())
-        }
-
-        taskAdapter.notifyDataSetChanged()
+            listTask.addAll(value)
+            taskAdapter.notifyDataSetChanged()
+        })
     }
 
     private fun deleteTasks(position: Int) {
-        Executors.newSingleThreadExecutor().execute {
-            dataBase.taskDao().deleteTask(listTask[position])
-            listTask.removeAt(position)
-        }
-        // Actualizar un usuario
-        //user1.email = "nuevo_email@example.com"
-        //db.userDao().updateUser(user1)
+        val dataToDelete = listTask[position]
+        viewModel.deleteData(dataToDelete)
+        listTask.removeAt(position)
+    }
+
+    private fun updateCheckedTask(isChecked: Boolean, task: TaskEntity) {
+        task.done = isChecked
+        viewModel.updateData(task)
     }
 
     private fun initComponents() {
@@ -65,13 +78,6 @@ class MainActivity : AppCompatActivity() {
             Room.databaseBuilder(applicationContext, TaskDataBase::class.java, "task_db").build()
         rvTasks = findViewById(R.id.rvTasks)
         fabAddTask = findViewById(R.id.fabAddTask)
-    }
-
-    private fun updateCheckedTask(isChecked: Boolean, task: TaskEntity) {
-        Executors.newSingleThreadExecutor().execute {
-            task.done = isChecked
-            dataBase.taskDao().updateTask(task)
-        }
     }
 
     private fun initUI() {
@@ -83,6 +89,7 @@ class MainActivity : AppCompatActivity() {
             }
         }, object : TaskAdapter.OnCheckedChangeListener {
             override fun onCheckedChange(isChecked: Boolean, position: Int) {
+                //update when change the checkBox state
                 updateCheckedTask(isChecked, listTask[position])
             }
         })

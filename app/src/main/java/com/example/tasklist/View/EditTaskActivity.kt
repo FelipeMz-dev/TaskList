@@ -10,16 +10,26 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import com.example.tasklist.DataBase.Entities.TaskEntity
+import com.example.tasklist.Data.Entities.TaskEntity
 import com.example.tasklist.R
-import com.example.tasklist.DataBase.TaskDataBase
-import com.example.tasklist.RecyclerView.Adapter.TaskStepAdapter
-import com.example.tasklist.RecyclerView.SwipeToDeleteCallback
+import com.example.tasklist.Data.DataBase.TaskDataBase
+import com.example.tasklist.TaskRepository
+import com.example.tasklist.TaskViewModel
+import com.example.tasklist.TaskViewModelFactory
+import com.example.tasklist.View.RecyclerView.Adapter.TaskStepAdapter
+import com.example.tasklist.View.RecyclerView.SwipeToDeleteCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.Executors
 
@@ -43,6 +53,10 @@ class EditTaskActivity : AppCompatActivity() {
         initUI()
     }
 
+    private val viewModel: TaskViewModel by viewModels {
+        TaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
+    }
+
     private fun getIdTaskExtra(): Boolean{
         var bundle :Bundle ?=intent.extras
         if (bundle != null) {
@@ -54,11 +68,11 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun getTaskModify(id: Long){
-        Executors.newSingleThreadExecutor().execute {
-            val task = dataBase.taskDao().getTaskById(id)
-            taskModify = task
+        CoroutineScope(Dispatchers.IO).launch {
+            taskModify = viewModel.getItemData(id)
             loadDataTask()
         }
+
     }
 
     private fun loadDataTask(){
@@ -68,7 +82,7 @@ class EditTaskActivity : AppCompatActivity() {
             val stepsString = taskModify!!.listSteps
             if (!stepsString.isEmpty()) {
                 listSteps.clear()
-                listSteps.addAll(stepsString.split ("|").toList())
+                listSteps.addAll(stepsString.split("|").toList())
             }
             taskStepAdapter.notifyDataSetChanged()
         }
@@ -114,11 +128,9 @@ class EditTaskActivity : AppCompatActivity() {
         taskModify!!.taskText = taskText
         taskModify!!.expiryDate = expiryDate
         taskModify!!.listSteps = listSteps.joinToString("|")
-        Executors.newSingleThreadExecutor().execute {
-            dataBase.taskDao().updateTask(taskModify!!)
-            setResult(RESULT_OK)
-            finish()
-        }
+        viewModel.updateData(taskModify!!)
+        setResult(RESULT_OK)
+        finish()
     }
 
     private fun saveNewTask(){
@@ -126,12 +138,9 @@ class EditTaskActivity : AppCompatActivity() {
         if (taskText.isEmpty()) return
         val expiryDate = tvExpiryDateEdit.text.toString()
         val task = TaskEntity(0,taskText, expiryDate, listSteps.joinToString("|"))
-        Executors.newSingleThreadExecutor().execute {
-            dataBase.taskDao().insertTask(task)
-            setResult(RESULT_OK)
-            finish()
-        }
-        Toast.makeText(this, R.string.task_saved, Toast.LENGTH_SHORT).show()
+        viewModel.insertData(task)
+        setResult(RESULT_OK)
+        finish()
     }
 
     private fun showInputDialog(){

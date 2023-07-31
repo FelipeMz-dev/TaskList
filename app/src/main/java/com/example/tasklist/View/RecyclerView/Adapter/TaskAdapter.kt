@@ -1,4 +1,4 @@
-package com.example.tasklist.RecyclerView.Adapter
+package com.example.tasklist.View.RecyclerView.Adapter
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tasklist.DataBase.Entities.TaskEntity
+import com.example.tasklist.Data.Entities.TaskEntity
 import com.example.tasklist.R
 import java.util.Date
 import java.util.Locale
@@ -53,8 +53,8 @@ class TaskAdapter(private val tasks: List<TaskEntity>,
         fun render(taskEntity: TaskEntity){
 
             itemView.setOnClickListener { listener.onItemClick(position) }
-            taskCheckBox.setOnCheckedChangeListener { _, isChecked ->
-                checkedListener.onCheckedChange(isChecked, position)
+            taskCheckBox.setOnClickListener {
+                checkedListener.onCheckedChange(taskCheckBox.isChecked, position)
             }
             taskCheckBox.isChecked = taskEntity.done
             taskText.text = taskEntity.taskText

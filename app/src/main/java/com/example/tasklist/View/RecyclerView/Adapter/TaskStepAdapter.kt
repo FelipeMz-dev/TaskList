@@ -1,4 +1,4 @@
-package com.example.tasklist.RecyclerView.Adapter
+package com.example.tasklist.View.RecyclerView.Adapter
 
 import android.view.LayoutInflater
 import android.view.View

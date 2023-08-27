@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    tools:context=".View.EditTaskActivity">
+    tools:context=".view.EditTaskActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,6 +50,7 @@
                     android:background="@android:drawable/editbox_background_normal"
                     android:backgroundTint="@color/ziggurat"
                     android:hint="@string/hint_do_the_homework"
+                    android:inputType="textCapSentences"
                     android:textColorHint="@color/tradewind"
                     android:textColor="@color/surfie_green"
                     android:textSize="20sp" />

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Task List</string>
+    <string name="edit_activity">Edit task</string>
+    <string name="write_your_task">Escribe la tarea</string>
+    <string name="hint_do_the_homework">Hacer mi tarea</string>
+    <string name="date_of_expiry">Fecha de caducación</string>
+    <string name="steps_to_solve">Pasos para resolver</string>
+    <string name="hint_enter_text_here">Escribe el texto aquí</string>
+    <string name="new_step">Nuevo paso</string>
+    <string name="todo">Hacer</string>
+    <string name="done">Hecho</string>
+    <string name="all">Todos</string>
+    <string name="add">Añadir</string>
+    <string name="apply">Aplicar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="update">Actualizar</string>
+    <string name="task_saved">Tarea guardada</string>
+    <string name="task_updated">Tarea Actualizada</string>
+    <string name="task_deleted">Tarea Borrada</string>
+</resources>

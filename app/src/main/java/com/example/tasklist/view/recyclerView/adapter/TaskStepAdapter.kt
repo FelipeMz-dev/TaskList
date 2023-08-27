@@ -1,4 +1,4 @@
-package com.example.tasklist.View.RecyclerView.Adapter
+package com.example.tasklist.view.recyclerView.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tasklist.R
 
-class TaskStepAdapter(private val steps: List<String>) : RecyclerView.Adapter<TaskStepAdapter.TaskStepsViewHolder>() {
+class TaskStepAdapter(
+    private val steps: List<String>,
+    private val onItemClickListener: (Int, String) -> Unit
+) : RecyclerView.Adapter<TaskStepAdapter.TaskStepsViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskStepsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_step_to_task, parent, false)
         return TaskStepsViewHolder(view)
@@ -27,6 +30,7 @@ class TaskStepAdapter(private val steps: List<String>) : RecyclerView.Adapter<Ta
         fun render(step: String, position: Int){
             tvStep.text = step
             tvNumberStep.text = "$position."
+            itemView.setOnClickListener { onItemClickListener(position, step) }
         }
     }
 

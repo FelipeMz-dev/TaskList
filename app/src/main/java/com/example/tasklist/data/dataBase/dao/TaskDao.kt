@@ -1,4 +1,4 @@
-package com.example.tasklist.Data.DataBase.Dao
+package com.example.tasklist.data.dataBase.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -6,8 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.tasklist.Data.Entities.TaskEntity
-import kotlinx.coroutines.flow.Flow
+import com.example.tasklist.data.entities.TaskEntity
 
 @Dao
 interface TaskDao {

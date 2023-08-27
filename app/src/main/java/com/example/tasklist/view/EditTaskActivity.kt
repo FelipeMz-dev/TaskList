@@ -1,4 +1,4 @@
-package com.example.tasklist.View
+package com.example.tasklist.view
 
 import android.app.DatePickerDialog
 import android.icu.text.SimpleDateFormat
@@ -9,29 +9,24 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import com.example.tasklist.Data.Entities.TaskEntity
+import com.example.tasklist.data.entities.TaskEntity
 import com.example.tasklist.R
-import com.example.tasklist.Data.DataBase.TaskDataBase
+import com.example.tasklist.data.dataBase.TaskDataBase
 import com.example.tasklist.TaskRepository
 import com.example.tasklist.TaskViewModel
 import com.example.tasklist.TaskViewModelFactory
-import com.example.tasklist.View.RecyclerView.Adapter.TaskStepAdapter
-import com.example.tasklist.View.RecyclerView.SwipeToDeleteCallback
+import com.example.tasklist.view.recyclerView.adapter.TaskStepAdapter
+import com.example.tasklist.view.recyclerView.SwipeToDeleteCallback
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.Locale
-import java.util.concurrent.Executors
 
 class EditTaskActivity : AppCompatActivity() {
 
@@ -57,8 +52,8 @@ class EditTaskActivity : AppCompatActivity() {
         TaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
     }
 
-    private fun getIdTaskExtra(): Boolean{
-        var bundle :Bundle ?=intent.extras
+    private fun getIdTaskExtra(): Boolean {
+        var bundle: Bundle? = intent.extras
         if (bundle != null) {
             val idTask = bundle.getLong("id_task")
             getTaskModify(idTask)
@@ -67,7 +62,7 @@ class EditTaskActivity : AppCompatActivity() {
         return false
     }
 
-    private fun getTaskModify(id: Long){
+    private fun getTaskModify(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
             taskModify = viewModel.getItemData(id)
             loadDataTask()
@@ -75,7 +70,7 @@ class EditTaskActivity : AppCompatActivity() {
 
     }
 
-    private fun loadDataTask(){
+    private fun loadDataTask() {
         runOnUiThread {
             etTaskTextEdit.setText(taskModify!!.taskText)
             tvExpiryDateEdit.text = taskModify!!.expiryDate
@@ -89,8 +84,9 @@ class EditTaskActivity : AppCompatActivity() {
 
     }
 
-    private fun initComponents(){
-        dataBase = Room.databaseBuilder(applicationContext, TaskDataBase::class.java, "task_db").build()
+    private fun initComponents() {
+        dataBase =
+            Room.databaseBuilder(applicationContext, TaskDataBase::class.java, "task_db").build()
         etTaskTextEdit = findViewById(R.id.etTaskTextEdit)
         tvExpiryDateEdit = findViewById(R.id.tvExpiryDateEdit)
         btnAddTaskStep = findViewById(R.id.btnAddTaskStep)
@@ -99,7 +95,7 @@ class EditTaskActivity : AppCompatActivity() {
         rvTaskSteps = findViewById(R.id.rvTaskSteps)
     }
 
-    private fun initUI(){
+    private fun initUI() {
         tvExpiryDateEdit.setOnClickListener { showDatePicker() }
         btnAddTaskStep.setOnClickListener { showInputDialog() }
         btnCancelTaskEdit.setOnClickListener { finish() }
@@ -109,7 +105,9 @@ class EditTaskActivity : AppCompatActivity() {
         }
         //List of steps
         //listSteps.add("comenzar por investigar")
-        taskStepAdapter = TaskStepAdapter(listSteps)
+        taskStepAdapter = TaskStepAdapter(listSteps) { position: Int, text: String ->
+            showInputDialog(position, text)
+        }
         rvTaskSteps.layoutManager = LinearLayoutManager(this)
         rvTaskSteps.adapter = taskStepAdapter
 
@@ -121,7 +119,7 @@ class EditTaskActivity : AppCompatActivity() {
         if (!getIdTaskExtra()) updateDateOnTextView(Calendar.getInstance()) //load task or Current Date
     }
 
-    private fun updateTask(){
+    private fun updateTask() {
         val taskText = etTaskTextEdit.text.toString()
         if (taskText.isEmpty()) return
         val expiryDate = tvExpiryDateEdit.text.toString()
@@ -133,17 +131,17 @@ class EditTaskActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun saveNewTask(){
+    private fun saveNewTask() {
         val taskText = etTaskTextEdit.text.toString()
         if (taskText.isEmpty()) return
         val expiryDate = tvExpiryDateEdit.text.toString()
-        val task = TaskEntity(0,taskText, expiryDate, listSteps.joinToString("|"))
+        val task = TaskEntity(0, taskText, expiryDate, listSteps.joinToString("|"))
         viewModel.insertData(task)
         setResult(RESULT_OK)
         finish()
     }
 
-    private fun showInputDialog(){
+    private fun showInputDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_task_step, null)
@@ -164,9 +162,41 @@ class EditTaskActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun addStep(text: String){
-        listSteps.add(text)
-        taskStepAdapter.notifyItemInserted(listSteps.size)
+    private fun showInputDialog(position: Int, text: String) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_task_step, null)
+        dialogBuilder.setView(dialogView)
+
+        val inputEditText: EditText = dialogView.findViewById(R.id.inputEditText)
+        inputEditText.setText(text)
+        inputEditText.requestFocus()
+
+        dialogBuilder.setTitle(R.string.new_step)
+        dialogBuilder.setPositiveButton(R.string.update) { _, _ ->
+            val userInputText = inputEditText.text.toString()
+            editStep(userInputText, position)
+        }
+        dialogBuilder.setNegativeButton(R.string.cancel) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun addStep(text: String) {
+        if (text.isNotEmpty()) {
+            listSteps.add(text)
+            taskStepAdapter.notifyItemInserted(listSteps.size)
+        }
+    }
+
+    private fun editStep(text: String, position: Int) {
+        if (text.isNotEmpty()) {
+            listSteps[position - 1] = text
+            taskStepAdapter.notifyItemChanged(position - 1)
+        }
     }
 
     private fun showDatePicker() {

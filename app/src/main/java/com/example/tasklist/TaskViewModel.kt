@@ -2,7 +2,7 @@ package com.example.tasklist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tasklist.Data.Entities.TaskEntity
+import com.example.tasklist.data.entities.TaskEntity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

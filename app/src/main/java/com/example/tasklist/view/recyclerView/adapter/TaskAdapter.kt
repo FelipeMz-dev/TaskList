@@ -1,7 +1,6 @@
-package com.example.tasklist.View.RecyclerView.Adapter
+package com.example.tasklist.view.recyclerView.adapter
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.view.LayoutInflater
@@ -10,15 +9,19 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tasklist.Data.Entities.TaskEntity
+import com.example.tasklist.data.entities.TaskEntity
 import com.example.tasklist.R
 import java.util.Date
 import java.util.Locale
 
-class TaskAdapter(private val tasks: List<TaskEntity>,
-                  private val listener: OnItemClickListener,
-                  private val checkedListener: OnCheckedChangeListener
+class TaskAdapter(
+    private val tasks: List<TaskEntity>,
+    private val listener: OnItemClickListener,
+    private val checkedListener: OnCheckedChangeListener
 ) : RecyclerView.Adapter<TaskAdapter.TasksViewHolder>() {
+
+    private var filteredItems: List<TaskEntity> = tasks
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
         return TasksViewHolder(view)
@@ -28,21 +31,37 @@ class TaskAdapter(private val tasks: List<TaskEntity>,
         fun onItemClick(position: Int)
     }
 
-    interface OnCheckedChangeListener{
+    interface OnCheckedChangeListener {
         fun onCheckedChange(isChecked: Boolean, position: Int)
     }
 
-    override fun getItemCount() = tasks.size
+    override fun getItemCount() = filteredItems.size
 
-    override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
-        holder.render(tasks[position])
+    fun filterTodo(){
+        filteredItems = tasks.filter { it.done }
+        notifyDataSetChanged()
     }
 
-    inner class TasksViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    fun filterDone(){
+        filteredItems = tasks.filter { it.done.not() }
+        notifyDataSetChanged()
+    }
+
+    fun filterAll(){
+        filteredItems = tasks
+        notifyDataSetChanged()
+    }
+
+    override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
+        holder.render(filteredItems[position])
+    }
+
+    inner class TasksViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val taskText: TextView = view.findViewById(R.id.tvTask)
         private val taskCheckBox: CheckBox = view.findViewById(R.id.cbTask)
-        var currentDate:Date
+        private val taskDate: TextView = view.findViewById(R.id.tvDate)
+        var currentDate: Date
 
         init {
             val calendar = Calendar.getInstance()
@@ -50,7 +69,7 @@ class TaskAdapter(private val tasks: List<TaskEntity>,
             currentDate = dateFormat.parse(dateFormat.format(calendar.time))
         }
 
-        fun render(taskEntity: TaskEntity){
+        fun render(taskEntity: TaskEntity) {
 
             itemView.setOnClickListener { listener.onItemClick(position) }
             taskCheckBox.setOnClickListener {
@@ -58,20 +77,24 @@ class TaskAdapter(private val tasks: List<TaskEntity>,
             }
             taskCheckBox.isChecked = taskEntity.done
             taskText.text = taskEntity.taskText
+            taskDate.text = taskEntity.expiryDate
 
             checkDateOfExpiry(tasks[tasks.indexOf(taskEntity)].expiryDate)
 
         }
 
-        private fun checkDateOfExpiry(strDate:String) {
+        private fun checkDateOfExpiry(strDate: String) {
             var colorExpiry = if (compareDates(strDate) >= 0)
                 itemView.resources.getColor(R.color.wheat)
             else
                 itemView.resources.getColor(R.color.white)
 
             taskText.setTextColor(colorExpiry)
-            taskCheckBox.buttonTintList = ColorStateList(arrayOf(
-                intArrayOf(android.R.attr.state_enabled)),
+            taskDate.setTextColor(colorExpiry)
+            taskCheckBox.buttonTintList = ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_enabled)
+                ),
                 intArrayOf(colorExpiry)
             )
         }

@@ -9,7 +9,7 @@ import com.example.tasklist.data.local.TaskEntity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
+class MainViewModel(private val repository: TaskRepository) : ViewModel() {
 
     private val taskList = MutableLiveData<List<TaskEntity>>()
     private val _filteredTask = MutableLiveData<List<TaskEntity>>()
@@ -23,9 +23,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     fun filterAllData() {
         viewModelScope.launch {
-            taskList.observeForever {
-                _filteredTask.value = it
-            }
+            taskList.observeForever { _filteredTask.value = it }
         }
     }
 
@@ -45,29 +43,11 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun insertData(data: TaskEntity) {
-        viewModelScope.launch {
-            repository.insertData(data)
-        }
-    }
-
     fun updateData(data: TaskEntity) {
-        viewModelScope.launch {
-            repository.updateData(data)
-        }
+        viewModelScope.launch { repository.updateData(data) }
     }
 
     fun deleteData(data: TaskEntity) {
-        viewModelScope.launch {
-            repository.deleteData(data)
-        }
+        viewModelScope.launch { repository.deleteData(data) }
     }
-
-    suspend fun getItemData(id: Long): TaskEntity? {
-        return withContext(viewModelScope.coroutineContext) {
-            repository.getItemData(id)
-        }
-    }
-
-
 }

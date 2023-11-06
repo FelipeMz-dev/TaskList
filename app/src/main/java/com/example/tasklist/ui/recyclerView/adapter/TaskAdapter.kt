@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tasklist.data.local.TaskEntity
 import com.example.tasklist.R
 import com.example.tasklist.ui.recyclerView.viewholder.TaskViewHolder
-import com.example.tasklist.ui.viewmodel.TaskViewModel
+import com.example.tasklist.ui.viewmodel.MainViewModel
 
 class TaskAdapter(
-    private val viewModel: TaskViewModel,
+    private val viewModel: MainViewModel,
     private val onItemClickListener: (Long) -> Unit,
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 

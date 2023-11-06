@@ -13,11 +13,11 @@ import com.example.tasklist.R
 import com.example.tasklist.ui.recyclerView.adapter.TaskAdapter
 import com.example.tasklist.data.local.TaskDataBase
 import com.example.tasklist.data.TaskRepository
-import com.example.tasklist.ui.viewmodel.TaskViewModel
-import com.example.tasklist.core.TaskViewModelFactory
-import com.example.tasklist.ui.getCircularIndex
+import com.example.tasklist.ui.viewmodel.MainViewModel
+import com.example.tasklist.core.MainViewModelFactory
+import com.example.tasklist.core.getCircularIndex
 import com.example.tasklist.ui.recyclerView.viewholder.TaskViewHolder
-import com.example.tasklist.ui.onSwipeItem
+import com.example.tasklist.core.onSwipeItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnFilter: Button
     private lateinit var filters: Array<String>
 
-    private val viewModel: TaskViewModel by viewModels {
-        TaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

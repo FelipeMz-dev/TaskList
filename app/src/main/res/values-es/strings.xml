@@ -8,9 +8,6 @@
     <string name="steps_to_solve">Pasos para resolver</string>
     <string name="hint_enter_text_here">Escribe el texto aquí</string>
     <string name="new_step">Nuevo paso</string>
-    <string name="todo">Hacer</string>
-    <string name="done">Hecho</string>
-    <string name="all">Todos</string>
     <string name="add">Añadir</string>
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>
@@ -19,4 +16,11 @@
     <string name="task_saved">Tarea guardada</string>
     <string name="task_updated">Tarea Actualizada</string>
     <string name="task_deleted">Tarea Borrada</string>
+    <string name="empty_text">Texto vacio</string>
+    <string name="accept">Aceptar</string>
+    <string-array name="filters">
+        <item>TODO</item>
+        <item>HACER</item>
+        <item>HECHO</item>
+    </string-array>
 </resources>

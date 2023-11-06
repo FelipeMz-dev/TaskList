@@ -1,4 +1,4 @@
-package com.example.tasklist.data.entities
+package com.example.tasklist.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,9 +1,9 @@
-package com.example.tasklist
+package com.example.tasklist.data
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import com.example.tasklist.data.dataBase.dao.TaskDao
-import com.example.tasklist.data.entities.TaskEntity
+import com.example.tasklist.data.local.dao.TaskDao
+import com.example.tasklist.data.local.TaskEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

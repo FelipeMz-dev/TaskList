@@ -1,7 +1,9 @@
-package com.example.tasklist
+package com.example.tasklist.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.tasklist.data.TaskRepository
+import com.example.tasklist.ui.viewmodel.TaskViewModel
 
 class TaskViewModelFactory(private val repository: TaskRepository): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    tools:context=".view.EditTaskActivity">
+    tools:context=".ui.view.EditTaskActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

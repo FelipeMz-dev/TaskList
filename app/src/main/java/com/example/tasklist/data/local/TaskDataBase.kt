@@ -1,11 +1,10 @@
-package com.example.tasklist.data.dataBase
+package com.example.tasklist.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.tasklist.data.dataBase.dao.TaskDao
-import com.example.tasklist.data.entities.TaskEntity
+import com.example.tasklist.data.local.dao.TaskDao
 
 @Database(entities = [TaskEntity::class], version = 1)
 abstract class TaskDataBase : RoomDatabase(){

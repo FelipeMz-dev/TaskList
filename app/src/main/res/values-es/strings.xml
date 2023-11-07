@@ -19,7 +19,7 @@
     <string name="empty_text">Texto vacio</string>
     <string name="accept">Aceptar</string>
     <string-array name="filters">
-        <item>TODO</item>
+        <item>TODOS</item>
         <item>HACER</item>
         <item>HECHO</item>
     </string-array>

@@ -24,7 +24,4 @@ interface TaskDao {
 
     @Delete
     fun deleteTask(task: TaskEntity)
-
-    @Query("SELECT COUNT(id) FROM tasks WHERE id = :taskId")
-    fun counterId(taskId: Long): Int
 }

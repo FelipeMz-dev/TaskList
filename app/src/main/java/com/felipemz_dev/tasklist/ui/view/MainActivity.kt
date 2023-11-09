@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.Button
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.felipemz_dev.tasklist.R
+import com.felipemz_dev.tasklist.core.AlarmHelper
 import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskAdapter
 import com.felipemz_dev.tasklist.data.local.TaskDataBase
 import com.felipemz_dev.tasklist.data.TaskRepository
@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var filters: Array<String>
+    private lateinit var alarmHelper: AlarmHelper
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
@@ -36,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         filters = resources.getStringArray(R.array.filters)
+        alarmHelper = AlarmHelper(this)
+        viewModel.setAlarmHelper(alarmHelper)
         initUI()
         initAds()
     }
@@ -58,20 +61,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun initUI() {
         taskAdapter = TaskAdapter(viewModel) { goEditTaskActivity(it) }
+        binding.btnFilter.setOnClickListener { onChangeFilter(it as Button ) }
+        binding.fabAddTask.setOnClickListener { goEditTaskActivity() }
         binding.rvTasks.layoutManager = LinearLayoutManager(this)
         binding.rvTasks.adapter = taskAdapter
-        binding.rvTasks.onSwipeItem { deleteItem(it) }
+        binding.rvTasks.onSwipeItem { deleteItem(it as TaskViewHolder) }
         binding.btnFilter.text = filters[0]
-        binding.btnFilter.setOnClickListener { onChangeFilter(it) }
-        binding.fabAddTask.setOnClickListener { goEditTaskActivity() }
         viewModel.isLoading.observe(this) {
             binding.pbLoading.visibility = if (it) View.VISIBLE else View.GONE
         }
+        viewModel.isEmpty.observe(this) {
+            binding.ivEmptyList.visibility = if (it) View.VISIBLE else View.GONE
+            binding.tvAddTaskIndication.visibility = if (it) View.VISIBLE else View.GONE
+            binding.tvFilterHereIndication.visibility = if (it) View.VISIBLE else View.GONE
+        }
     }
 
-    private fun deleteItem(viewHolder: ViewHolder) {
-        viewHolder as TaskViewHolder
-        viewModel.deleteData(viewHolder.getTask())
+    private fun deleteItem(viewHolder: TaskViewHolder) {
+        val task = viewHolder.getTask()
+        viewModel.deleteData(task)
     }
 
     private fun goEditTaskActivity(id: Long? = null) {
@@ -80,8 +88,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun onChangeFilter(view: View) {
-        view as Button
+    private fun onChangeFilter(view: Button) {
         val index = filters.indexOf(view.text)
         view.text = filters[filters.getCircularIndex(index)]
         when (index) {

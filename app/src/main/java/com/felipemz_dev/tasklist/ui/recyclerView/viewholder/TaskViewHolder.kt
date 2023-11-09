@@ -1,6 +1,5 @@
 package com.felipemz_dev.tasklist.ui.recyclerView.viewholder
 
-import android.content.res.ColorStateList
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.view.View
@@ -26,7 +25,7 @@ class TaskViewHolder (
 
     init {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
         currentDate = dateFormat.parse(dateFormat.format(calendar.time))
     }
 
@@ -38,32 +37,23 @@ class TaskViewHolder (
         }
         taskCheckBox.isChecked = taskEntity.done
         taskText.text = taskEntity.taskText
-        taskDate.text = taskEntity.expiryDate
 
-        checkDateOfExpiry(taskEntity.expiryDate)
-
+        if (task.isRemember) checkDateOfExpiry()
+        else taskDate.text = itemView.resources.getString(R.string.undefined)
     }
 
-    private fun checkDateOfExpiry(strDate: String) {
-        var colorExpiry = if (compareDates(strDate) >= 0)
-            itemView.resources.getColor(R.color.wheat)
-        else
-            itemView.resources.getColor(R.color.white)
-
-        taskText.setTextColor(colorExpiry)
-        taskDate.setTextColor(colorExpiry)
-        taskCheckBox.buttonTintList = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_enabled)
-            ),
-            intArrayOf(colorExpiry)
-        )
-    }
-
-    fun compareDates(dateStr: String): Int {
+    private fun checkDateOfExpiry() {
+        val format = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val date2: Date = dateFormat.parse(dateStr)!!
-        return currentDate.compareTo(date2)
+        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val date: Date = format.parse(task.expiryDate)
+        val textToDate = dateFormat.format(date) + " - " + timeFormat.format(date)
+        taskDate.text = textToDate
+        if (currentDate >= date) {
+            taskDate.setTextColor(itemView.resources.getColor(R.color.wheat))
+        } else {
+            taskDate.setTextColor(itemView.resources.getColor(R.color.white))
+            itemView.resources.getColor(R.color.white)
+        }
     }
-
 }

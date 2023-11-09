@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".TaskListApp"
         android:allowBackup="true"
@@ -13,6 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskList"
         tools:targetApi="34">
+        <receiver android:name=".core.ScheduleNotificationManager"
+            android:enabled="true" />
         <activity
             android:name=".ui.view.EditTaskActivity"
             android:exported="false" />

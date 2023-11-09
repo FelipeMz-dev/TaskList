@@ -27,59 +27,90 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="32dp"
-                    android:layout_marginVertical="40dp"
+                    android:layout_marginVertical="35dp"
                     android:text="@string/edit_activity"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="32sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tlTaskTextEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:backgroundTint="@color/ziggurat"
+                    android:textColorHint="@color/tradewind"  >
+
+                    <EditText
+                        android:id="@+id/etTaskTextEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/ziggurat"
+                        android:ems="10"
+                        android:hint="@string/hint_do_the_homework"
+                        android:inputType="textCapSentences"
+                        android:maxLength="255"
+                        android:textColor="@color/surfie_green"
+
+                        android:textSize="20sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/checkboxRemember"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:text="@string/write_your_task"
+                    android:checked="true"
+                    android:layout_marginTop="29dp"
+                    android:text="@string/remember"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/etTaskTextEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat"
-                    android:hint="@string/hint_do_the_homework"
-                    android:inputType="textCapSentences"
-                    android:textColorHint="@color/tradewind"
-                    android:textColor="@color/surfie_green"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:text="@string/date_of_expiry"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/tvExpiryDateEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat"
-                    android:textColor="@color/surfie_green"
                     android:textSize="20sp"
-                    tools:text="27/07/2023"
-                    app:drawableEndCompat="@android:drawable/ic_menu_today" />
+                    app:buttonTint="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvExpiryDateEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_weight="1.2"
+                        android:background="@android:drawable/editbox_background_normal"
+                        android:backgroundTint="@color/ziggurat"
+                        android:gravity="center"
+                        android:textColor="@color/surfie_green"
+                        android:textSize="20sp"
+                        app:drawableEndCompat="@android:drawable/ic_menu_today"
+                        tools:text="27/07/2023" />
+
+                    <TextView
+                        android:id="@+id/tvExpiryTimeEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_weight="1"
+                        android:background="@android:drawable/editbox_background_normal"
+                        android:backgroundTint="@color/ziggurat"
+                        android:gravity="center"
+                        android:textColor="@color/surfie_green"
+                        android:textSize="20sp"
+                        app:drawableEndCompat="@android:drawable/ic_menu_recent_history"
+                        tools:text="04:00 PM" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:text="@string/steps_to_solve"
+                    android:text="@string/steps"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 

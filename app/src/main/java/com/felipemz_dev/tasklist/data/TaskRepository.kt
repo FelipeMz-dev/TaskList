@@ -19,13 +19,6 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     @WorkerThread
-    suspend fun exists(id: Long): Boolean {
-        return withContext(Dispatchers.IO) {
-            (taskDao.counterId(id) > 0)
-        }
-    }
-
-    @WorkerThread
     suspend fun insertData(data: TaskEntity) {
         withContext(Dispatchers.IO) {
             taskDao.insertTask(data)

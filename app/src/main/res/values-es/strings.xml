@@ -5,7 +5,7 @@
     <string name="write_your_task">Escribe la tarea</string>
     <string name="hint_do_the_homework">Hacer mi tarea</string>
     <string name="date_of_expiry">Fecha de caducación</string>
-    <string name="steps_to_solve">Pasos para resolver</string>
+    <string name="steps">Pasos:</string>
     <string name="hint_enter_text_here">Escribe el texto aquí</string>
     <string name="new_step">Nuevo paso</string>
     <string name="add">Añadir</string>
@@ -18,6 +18,11 @@
     <string name="task_deleted">Tarea Borrada</string>
     <string name="empty_text">Texto vacio</string>
     <string name="accept">Aceptar</string>
+    <string name="add_your_task_here">Añade tus tareas aquí ➜</string>
+    <string name="filter_here">️Filtra aquí</string>
+    <string name="task_reminder">Recordatorio de tarea</string>
+    <string name="remember">Recordar</string>
+    <string name="undefined">Indefinido</string>
     <string-array name="filters">
         <item>TODOS</item>
         <item>HACER</item>

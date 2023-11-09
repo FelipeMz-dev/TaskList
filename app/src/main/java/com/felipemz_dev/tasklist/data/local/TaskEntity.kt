@@ -10,5 +10,6 @@ data class TaskEntity(
     @ColumnInfo(name = "id") val id: Long = 0,
     @ColumnInfo(name = "taskText") var taskText: String,
     @ColumnInfo(name = "expiryDate") var expiryDate: String,
+    @ColumnInfo(name = "isRemember") var isRemember: Boolean,
     @ColumnInfo(name = "ListSteps") var listSteps: String,
     @ColumnInfo(name = "done") var done: Boolean = false)

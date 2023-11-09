@@ -6,15 +6,21 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import android.app.AlertDialog
+import android.content.res.ColorStateList
+import android.view.View
+import android.widget.CheckBox
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.felipemz_dev.tasklist.R
+import com.felipemz_dev.tasklist.core.AlarmHelper
 import com.felipemz_dev.tasklist.core.EditTaskViewModelFactory
+import com.felipemz_dev.tasklist.core.addHintChangeStyle
 import com.felipemz_dev.tasklist.core.makeTextToast
 import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskStepAdapter
 import com.felipemz_dev.tasklist.core.onSwipeItem
 import com.felipemz_dev.tasklist.core.makeCustomDatePicker
 import com.felipemz_dev.tasklist.core.makeCustomDialog
+import com.felipemz_dev.tasklist.core.makeCustomTimePicker
 import com.felipemz_dev.tasklist.data.TaskRepository
 import com.felipemz_dev.tasklist.data.local.TaskDataBase
 import com.felipemz_dev.tasklist.databinding.ActivityEditTaskBinding
@@ -23,7 +29,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import java.util.Arrays
 import java.util.Locale
 
 class EditTaskActivity : AppCompatActivity() {
@@ -33,6 +38,7 @@ class EditTaskActivity : AppCompatActivity() {
     private var interstitialAd: InterstitialAd? = null
     private var adsCounter = 0
     private var listSteps = mutableListOf<String>()
+    private lateinit var alarmHelper: AlarmHelper
 
     private val viewModel: EditTaskViewModel by viewModels {
         EditTaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
@@ -42,20 +48,38 @@ class EditTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        alarmHelper = AlarmHelper(this)
+        viewModel.setAlarmHelper(alarmHelper)
         initUI()
         initExtraData()
         initAds()
+        initRememberState()
+    }
+
+    private fun initRememberState() {
+        viewModel.remember.observe(this){
+            binding.tvExpiryDateEdit.visibility = if (it) View.VISIBLE else View.GONE
+            binding.tvExpiryTimeEdit.visibility = if (it) View.VISIBLE else View.GONE
+        }
+        binding.checkboxRemember.setOnClickListener{
+            it as CheckBox
+            viewModel.remember.value = it.isChecked
+        }
     }
 
     private fun initUI() {
         taskStepAdapter = TaskStepAdapter(listSteps, ::showInputDialog)
         binding.tvExpiryDateEdit.setOnClickListener { showDatePicker() }
+        binding.tvExpiryTimeEdit.setOnClickListener { showTimePicker() }
         binding.btnAddTaskStep.setOnClickListener { showInputDialog() }
         binding.btnCancelTaskEdit.setOnClickListener { finish() }
         binding.btnApplyTaskEdit.setOnClickListener { saveData() }
         binding.rvTaskSteps.layoutManager = LinearLayoutManager(this)
         binding.rvTaskSteps.adapter = taskStepAdapter
         binding.rvTaskSteps.onSwipeItem { deleteItem(it) }
+        binding.tlTaskTextEdit.addHintChangeStyle(
+            resources.getColor(R.color.surfie_green)
+        )
     }
 
     private fun initExtraData() {
@@ -64,9 +88,13 @@ class EditTaskActivity : AppCompatActivity() {
             val taskId = bundle.getLong("id_task")
             viewModel.getItemData(taskId)
             renderTask()
-            return
+        } else {
+            loadDateOnTextView()
+            val defaultTime = Calendar.getInstance()
+            defaultTime.set(Calendar.HOUR_OF_DAY, 23)
+            defaultTime.set(Calendar.MINUTE, 59)
+            loadTimeOnTextView(defaultTime)
         }
-        loadDateOnTextView()
     }
 
     private fun deleteItem(viewHolder: ViewHolder) {
@@ -76,11 +104,13 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun saveData() {
-        val arg = binding.etTaskTextEdit.text.toString().ifEmpty {
+        val arg = binding.etTaskTextEdit.text.toString().trim().ifEmpty {
             makeTextToast(R.string.empty_text)
             return
         }
-        val expiryDate = binding.tvExpiryDateEdit.text.toString()
+        val expiryDate = if (viewModel.remember.value == true){
+            binding.tvExpiryDateEdit.text.toString() + " " + binding.tvExpiryTimeEdit.text.toString()
+        }else{ "" }
         val listSteps = listSteps.joinToString("|")
         viewModel.saveData(arg, expiryDate, listSteps)
         finish()
@@ -89,7 +119,7 @@ class EditTaskActivity : AppCompatActivity() {
     private fun renderTask() {
         viewModel.task.observe(this) { task ->
             binding.etTaskTextEdit.setText(task.taskText)
-            binding.tvExpiryDateEdit.text = task.expiryDate
+            fillExpiryDateTexts(task.expiryDate, task.isRemember)
             val stepsString = task.listSteps
             if (stepsString.isNotEmpty()) {
                 listSteps.addAll(stepsString.split("|").toList())
@@ -98,9 +128,25 @@ class EditTaskActivity : AppCompatActivity() {
         }
     }
 
+    private fun fillExpiryDateTexts(text: String, isRemember: Boolean) {
+        val format = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        if (isRemember) calendar.time = format.parse(text)
+        val textDate = dateFormat.format(calendar.time)
+        val textTime = timeFormat.format(calendar.time)
+        binding.checkboxRemember.isChecked = isRemember
+        viewModel.remember.value = isRemember
+        binding.tvExpiryDateEdit.text = textDate
+        binding.tvExpiryTimeEdit.text = textTime
+    }
+
     private fun showInputDialog() {
-        checkAdsCounter()
         AlertDialog.Builder(this).makeCustomDialog(this.layoutInflater) {
+            checkAdsCounter()
             addStep(it)
         }.show()
     }
@@ -126,8 +172,22 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun showDatePicker() {
-        Calendar.getInstance().makeCustomDatePicker(this) {
+        val currentDate = binding.tvExpiryDateEdit.text.toString()
+        Calendar.getInstance().makeCustomDatePicker(
+            this,
+            currentDate
+        ) {
             loadDateOnTextView(it)
+        }.show()
+    }
+
+    private fun showTimePicker() {
+        val currentTime = binding.tvExpiryTimeEdit.text.toString()
+        Calendar.getInstance().makeCustomTimePicker(
+            this,
+            currentTime
+        ) {
+            loadTimeOnTextView(it)
         }.show()
     }
 
@@ -135,6 +195,12 @@ class EditTaskActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val formattedDate = dateFormat.format(calendar.time)
         binding.tvExpiryDateEdit.text = formattedDate
+    }
+
+    private fun loadTimeOnTextView(calendar: Calendar) {
+        val timeFormat = java.text.SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val formattedTime = timeFormat.format(calendar.time)
+        binding.tvExpiryTimeEdit.text = formattedTime
     }
 
     //                                                                          <- ads
@@ -164,7 +230,7 @@ class EditTaskActivity : AppCompatActivity() {
         adsCounter++
     }
 
-    private fun showAds(){
+    private fun showAds() {
         if (interstitialAd != null) {
             interstitialAd?.show(this)
             interstitialAd = null

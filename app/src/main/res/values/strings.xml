@@ -4,7 +4,7 @@
     <string name="write_your_task">Write your task</string>
     <string name="hint_do_the_homework">Do the homework</string>
     <string name="date_of_expiry">Date of expiry</string>
-    <string name="steps_to_solve">Steps to solve</string>
+    <string name="steps">Steps:</string>
     <string name="hint_enter_text_here">Enter text here</string>
     <string name="new_step">New Step</string>
     <string name="add">Add</string>
@@ -17,6 +17,11 @@
     <string name="task_deleted">Task deleted</string>
     <string name="empty_text">Empty text</string>
     <string name="accept">Accept</string>
+    <string name="add_your_task_here">Add your task here ➜</string>
+    <string name="task_reminder">Task reminder</string>
+    <string name="filter_here">️Filter here</string>
+    <string name="remember">Remember</string>
+    <string name="undefined">Undefined</string>
     <string-array name="filters">
         <item>ALL</item>
         <item>TODO</item>

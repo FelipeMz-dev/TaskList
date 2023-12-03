@@ -4,7 +4,7 @@
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/tradewind</item>
         <item name="colorPrimaryVariant">@color/tradewind</item>
-        <item name="colorOnPrimary">@color/wheat</item>
+        <item name="colorOnPrimary">@color/surfie_green</item>
 
         <item name="colorSecondary">@color/apricot</item>
 

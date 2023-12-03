@@ -2,10 +2,10 @@
 <resources>
     <string name="app_name">Task List</string>
     <string name="edit_activity">Edit task</string>
-    <string name="write_your_task">Escribe la tarea</string>
+    <string name="write_your_task">Escribe tu tarea</string>
     <string name="hint_do_the_homework">Hacer mi tarea</string>
     <string name="date_of_expiry">Fecha de caducación</string>
-    <string name="steps">Pasos:</string>
+    <string name="grades">Notas:</string>
     <string name="hint_enter_text_here">Escribe el texto aquí</string>
     <string name="new_step">Nuevo paso</string>
     <string name="add">Añadir</string>
@@ -23,6 +23,24 @@
     <string name="task_reminder">Recordatorio de tarea</string>
     <string name="remember">Recordar</string>
     <string name="undefined">Indefinido</string>
+    <string name="advertisements">Publicidad</string>
+    <string name="add_note">Añadir</string>
+    <string name="select_image">Seleccione la imagen</string>
+    <string name="str_today">HOY</string>
+    <string name="str_expired">VENCIÓ</string>
+    <string name="error_load_image">error loading image</string>
+    <string name="enable_notifications">Habilitar Notificaciones</string>
+    <string name="body_enable_notifications">Para recibir recordatorios de tus tareas, por favor habilite las notificaciones de esta aplicación.</string>
+    <string name="str_enable">Habilitar</string>
+    <string name="have_you_already_done_it">Ya lo has hecho?</string>
+    <string name="dialog_confirm_delete">seguro que quieres quitar la tarea de la lista?</string>
+    <string name="dialog_check_done_task">Has Completado la tarea!</string>
+    <string name="dialog_button_false_alarm">Falsa Alarma</string>
+    <string name="dialog_button_done">Hecho</string>
+    <string name="dialog_before">antes</string>
+    <string name="dialog_after">después</string>
+    <string name="confirm">Confirmar</string>
+    <string name="delete_task">Borrar Tarea</string>
     <string-array name="filters">
         <item>TODOS</item>
         <item>HACER</item>

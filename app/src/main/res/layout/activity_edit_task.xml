@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,137 +8,203 @@
     android:orientation="vertical"
     tools:context=".ui.view.EditTaskActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llButtonsEditTask"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:text="@string/edit_activity"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tlTaskTextEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:backgroundTint="@color/ziggurat"
+                android:gravity="center_vertical"
+                android:textColorHint="@color/tradewind">
+
+                <EditText
+                    android:id="@+id/etTaskTextEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/ziggurat"
+                    android:ems="10"
+                    android:gravity="center_vertical"
+                    android:hint="@string/write_your_task"
+                    android:inputType="textCapSentences"
+                    android:maxLength="255"
+                    android:textColor="@color/surfie_green"
+                    android:textSize="20sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="32dp"
-                    android:layout_marginVertical="35dp"
-                    android:text="@string/edit_activity"
-                    android:textAllCaps="true"
-                    android:textColor="@color/white"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tlTaskTextEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat"
-                    android:textColorHint="@color/tradewind"  >
-
-                    <EditText
-                        android:id="@+id/etTaskTextEdit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/ziggurat"
-                        android:ems="10"
-                        android:hint="@string/hint_do_the_homework"
-                        android:inputType="textCapSentences"
-                        android:maxLength="255"
-                        android:textColor="@color/surfie_green"
-
-                        android:textSize="20sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <CheckBox
                     android:id="@+id/checkboxRemember"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
                     android:checked="true"
-                    android:layout_marginTop="29dp"
                     android:text="@string/remember"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     app:buttonTint="@color/white" />
+
+                <TextView
+                    android:id="@+id/tvExpiredReport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="18dp"
+                    android:drawablePadding="2dp"
+                    android:gravity="end"
+                    android:text="@string/str_expired"
+                    android:textColor="@color/wheat"
+                    android:textSize="20sp"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/baseline_report_24" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="22dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvExpiryDateEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_weight="1.15"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:backgroundTint="@color/ziggurat"
+                    android:gravity="center"
+                    android:textColor="@color/surfie_green"
+                    android:textSize="18sp"
+                    app:drawableEndCompat="@drawable/baseline_calendar_month_24"
+                    app:drawableTint="@color/surfie_green"
+                    tools:text="27/07/2023" />
+
+                <TextView
+                    android:id="@+id/tvExpiryTimeEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:backgroundTint="@color/ziggurat"
+                    android:gravity="center"
+                    android:textColor="@color/surfie_green"
+                    android:textSize="18sp"
+                    app:drawableEndCompat="@drawable/baseline_access_time_24"
+                    app:drawableTint="@color/surfie_green"
+                    tools:text="04:00 PM" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:backgroundTint="@color/ziggurat"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/grades"
+                    android:textColor="@color/surfie_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:drawableEndCompat="@drawable/baseline_sticky_note_2_24"
+                    app:drawableTint="@color/surfie_green" />
+
+                <ImageView
+                    android:id="@+id/ivNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTaskNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:backgroundTint="@color/ziggurat" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tvExpiryDateEdit"
+                    <Button
+                        android:id="@+id/btnAddTaskNote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:layout_weight="1.2"
-                        android:background="@android:drawable/editbox_background_normal"
-                        android:backgroundTint="@color/ziggurat"
-                        android:gravity="center"
-                        android:textColor="@color/surfie_green"
-                        android:textSize="20sp"
-                        app:drawableEndCompat="@android:drawable/ic_menu_today"
-                        tools:text="27/07/2023" />
-
-                    <TextView
-                        android:id="@+id/tvExpiryTimeEdit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="16dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginHorizontal="10dp"
                         android:layout_weight="1"
-                        android:background="@android:drawable/editbox_background_normal"
-                        android:backgroundTint="@color/ziggurat"
-                        android:gravity="center"
-                        android:textColor="@color/surfie_green"
+                        android:backgroundTint="@color/apricot"
+                        android:drawableEnd="@drawable/round_add_24"
+                        android:text="@string/add_note"
+                        android:textColor="@color/white"
                         android:textSize="20sp"
-                        app:drawableEndCompat="@android:drawable/ic_menu_recent_history"
-                        tools:text="04:00 PM" />
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnAddTaskImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="@color/apricot"
+                        android:drawableEnd="@drawable/baseline_add_photo_alternate_24"
+                        android:textSize="20sp" />
 
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:text="@string/steps"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvTaskSteps"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat" />
-
-                <ImageButton
-                    android:id="@+id/btnAddTaskStep"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:backgroundTint="@color/apricot"
-                    android:src="@android:drawable/ic_input_add"
-                    app:tint="@color/white" />
-
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/llButtonsEditTask"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/tradewind"
         android:orientation="horizontal"
         android:padding="16dp">
 
@@ -146,26 +212,27 @@
             android:id="@+id/btnCancelTaskEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/apricot"
+            android:drawableEnd="@drawable/round_close_24"
             android:text="@string/cancel"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnApplyTaskEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:backgroundTint="@color/apricot"
+            android:drawableEnd="@drawable/round_check_24"
             android:text="@string/apply"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

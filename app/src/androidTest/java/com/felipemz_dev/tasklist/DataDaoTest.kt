@@ -43,6 +43,7 @@ class DataDaoTest {
             taskText = "do the homework",
             expiryDate = "31/07/2023",
             listSteps = "complete the first step",
+            isRemember = true,
             done = false
         )
         dataDao.insertTask(data)

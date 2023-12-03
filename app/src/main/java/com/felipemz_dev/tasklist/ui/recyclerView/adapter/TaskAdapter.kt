@@ -11,6 +11,7 @@ import com.felipemz_dev.tasklist.ui.viewmodel.MainViewModel
 class TaskAdapter(
     private val viewModel: MainViewModel,
     private val onItemClickListener: (Long) -> Unit,
+    private val onTaskChecked: (task: TaskEntity) -> Unit
 ) : RecyclerView.Adapter<TaskViewHolder>() {
 
     private var taskList: List<TaskEntity> = emptyList()
@@ -28,7 +29,7 @@ class TaskAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val context = parent.context
         val view = LayoutInflater.from(context).inflate(R.layout.item_task, parent, false)
-        return TaskViewHolder(view){ viewModel.updateData(it) }
+        return TaskViewHolder(view){ onTaskChecked(it) }
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {

@@ -1,44 +1,49 @@
 package com.felipemz_dev.tasklist.ui.view
 
-import android.icu.text.SimpleDateFormat
-import android.icu.util.Calendar
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.activity.viewModels
-import android.app.AlertDialog
-import android.content.res.ColorStateList
+import android.provider.MediaStore
 import android.view.View
-import android.widget.CheckBox
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.felipemz_dev.tasklist.R
-import com.felipemz_dev.tasklist.core.AlarmHelper
-import com.felipemz_dev.tasklist.core.EditTaskViewModelFactory
-import com.felipemz_dev.tasklist.core.addHintChangeStyle
-import com.felipemz_dev.tasklist.core.makeTextToast
-import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskStepAdapter
-import com.felipemz_dev.tasklist.core.onSwipeItem
-import com.felipemz_dev.tasklist.core.makeCustomDatePicker
-import com.felipemz_dev.tasklist.core.makeCustomDialog
-import com.felipemz_dev.tasklist.core.makeCustomTimePicker
+import com.felipemz_dev.tasklist.core.ConsentManager
+import com.felipemz_dev.tasklist.core.TextDateUtils
+import com.felipemz_dev.tasklist.core.extensions.addHintChangeStyle
+import com.felipemz_dev.tasklist.core.extensions.makeResourcesToast
+import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
+import com.felipemz_dev.tasklist.core.extensions.onSwipeItem
+import com.felipemz_dev.tasklist.core.extensions.showInputDialog
+import com.felipemz_dev.tasklist.core.viewmodelfactory.EditTaskViewModelFactory
 import com.felipemz_dev.tasklist.data.TaskRepository
 import com.felipemz_dev.tasklist.data.local.TaskDataBase
 import com.felipemz_dev.tasklist.databinding.ActivityEditTaskBinding
+import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskNoteAdapter
 import com.felipemz_dev.tasklist.ui.viewmodel.EditTaskViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import java.util.Locale
 
 class EditTaskActivity : AppCompatActivity() {
 
+    companion object {
+        const val CODE_SELECT_IMAGE = 101
+        const val EDIT_NOTE_IMAGE = "EDIT_NOTE_IMAGE"
+        const val TAG_DELIMITER = "-|-"
+        const val TAG_IS_IMAGE_NOTE = "TL-H21.Image"
+    }
+
     private lateinit var binding: ActivityEditTaskBinding
-    private lateinit var taskStepAdapter: TaskStepAdapter
+    private lateinit var taskStepAdapter: TaskNoteAdapter
     private var interstitialAd: InterstitialAd? = null
     private var adsCounter = 0
-    private var listSteps = mutableListOf<String>()
-    private lateinit var alarmHelper: AlarmHelper
+    private lateinit var alarmHelper: NotificationScheduler
+    private lateinit var consentManager: ConsentManager
 
     private val viewModel: EditTaskViewModel by viewModels {
         EditTaskViewModelFactory(TaskRepository(TaskDataBase.getInstance(this).taskDao()))
@@ -48,180 +53,141 @@ class EditTaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        alarmHelper = AlarmHelper(this)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        consentManager = ConsentManager(this)
+        alarmHelper = NotificationScheduler(this)
         viewModel.setAlarmHelper(alarmHelper)
         initUI()
         initExtraData()
         initAds()
-        initRememberState()
     }
 
-    private fun initRememberState() {
-        viewModel.remember.observe(this){
-            binding.tvExpiryDateEdit.visibility = if (it) View.VISIBLE else View.GONE
-            binding.tvExpiryTimeEdit.visibility = if (it) View.VISIBLE else View.GONE
-        }
-        binding.checkboxRemember.setOnClickListener{
-            it as CheckBox
-            viewModel.remember.value = it.isChecked
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == CODE_SELECT_IMAGE) {
+            val imageBitmap = if (data?.data != null) {
+                MediaStore.Images.Media.getBitmap(contentResolver, data.data)
+            } else data?.extras?.get("data") as Bitmap
+            if (imageBitmap == null) {
+                makeResourcesToast(R.string.error_load_image)
+                return
+            }
+            viewModel.setNewImageToNote(imageBitmap)
         }
     }
 
     private fun initUI() {
-        taskStepAdapter = TaskStepAdapter(listSteps, ::showInputDialog)
-        binding.tvExpiryDateEdit.setOnClickListener { showDatePicker() }
-        binding.tvExpiryTimeEdit.setOnClickListener { showTimePicker() }
-        binding.btnAddTaskStep.setOnClickListener { showInputDialog() }
-        binding.btnCancelTaskEdit.setOnClickListener { finish() }
-        binding.btnApplyTaskEdit.setOnClickListener { saveData() }
-        binding.rvTaskSteps.layoutManager = LinearLayoutManager(this)
-        binding.rvTaskSteps.adapter = taskStepAdapter
-        binding.rvTaskSteps.onSwipeItem { deleteItem(it) }
-        binding.tlTaskTextEdit.addHintChangeStyle(
-            resources.getColor(R.color.surfie_green)
-        )
+        val context = this
+        binding.apply {
+            tvExpiryDateEdit.setOnClickListener { viewModel.showDatePicker(context) }
+            tvExpiryTimeEdit.setOnClickListener { viewModel.showTimePicker(context) }
+            btnCancelTaskEdit.setOnClickListener { finish() }
+            taskStepAdapter = TaskNoteAdapter(viewModel.listNote) { position, text ->
+                editDataNote(position, text)
+            }
+            btnApplyTaskEdit.setOnClickListener {
+                if (viewModel.saveData(etTaskTextEdit.text.toString())) finish()
+                else makeResourcesToast(R.string.empty_text)
+            }
+            btnAddTaskNote.setOnClickListener {
+                showInputDialog {
+                    viewModel.addNote(it)
+                    checkAdsCounter()
+                }
+            }
+            btnAddTaskImage.setOnClickListener {
+                viewModel.openImageChooserIntent(context)
+            }
+            rvTaskNotes.layoutManager = LinearLayoutManager(context)
+            rvTaskNotes.adapter = taskStepAdapter
+            rvTaskNotes.onSwipeItem {
+                viewModel.removeNote(it as TaskNoteAdapter.TaskStepsViewHolder)
+            }
+            checkboxRemember.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.remember.value = isChecked
+            }
+            tlTaskTextEdit.addHintChangeStyle(
+                resources.getColor(R.color.surfie_green)
+            )
+            viewModel.remember.observe(context) {
+                checkboxRemember.isChecked = it
+                tvExpiryDateEdit.visibility = if (it) View.VISIBLE else View.GONE
+                tvExpiryTimeEdit.visibility = if (it) View.VISIBLE else View.GONE
+            }
+            viewModel.dateText.observe(context) {
+                tvExpiryDateEdit.text = it
+                checkExpiryDateReport()
+            }
+            viewModel.timeText.observe(context) {
+                tvExpiryTimeEdit.text = it
+                checkExpiryDateReport()
+            }
+        }
+    }
+
+    private fun editDataNote(position: Int, text: String) {
+        if (text.contains(TAG_IS_IMAGE_NOTE)) {
+            viewModel.openImageChooserIntent(this, position)
+        }else{
+            viewModel.editNote(text, position)
+        }
+    }
+
+    private fun checkExpiryDateReport() {
+        binding.tvExpiredReport.apply {
+            visibility = if (TextDateUtils.isDateExpired(
+                    viewModel.dateText.value!!,
+                    viewModel.timeText.value!!
+                )
+            ) View.VISIBLE
+            else View.GONE
+        }
     }
 
     private fun initExtraData() {
-        val bundle: Bundle? = intent.extras
+        val bundle = intent.extras
         if (bundle != null) {
             val taskId = bundle.getLong("id_task")
             viewModel.getItemData(taskId)
             renderTask()
         } else {
-            loadDateOnTextView()
-            val defaultTime = Calendar.getInstance()
-            defaultTime.set(Calendar.HOUR_OF_DAY, 23)
-            defaultTime.set(Calendar.MINUTE, 59)
-            loadTimeOnTextView(defaultTime)
+            viewModel.dateText.value = TextDateUtils.loadDateOnTextView()
+            viewModel.timeText.value = TextDateUtils.loadTimeOnTextView()
         }
-    }
-
-    private fun deleteItem(viewHolder: ViewHolder) {
-        viewHolder as TaskStepAdapter.TaskStepsViewHolder
-        val position = viewHolder.adapterPosition
-        taskStepAdapter.deleteItem(position)
-    }
-
-    private fun saveData() {
-        val arg = binding.etTaskTextEdit.text.toString().trim().ifEmpty {
-            makeTextToast(R.string.empty_text)
-            return
-        }
-        val expiryDate = if (viewModel.remember.value == true){
-            binding.tvExpiryDateEdit.text.toString() + " " + binding.tvExpiryTimeEdit.text.toString()
-        }else{ "" }
-        val listSteps = listSteps.joinToString("|")
-        viewModel.saveData(arg, expiryDate, listSteps)
-        finish()
     }
 
     private fun renderTask() {
         viewModel.task.observe(this) { task ->
             binding.etTaskTextEdit.setText(task.taskText)
-            fillExpiryDateTexts(task.expiryDate, task.isRemember)
-            val stepsString = task.listSteps
-            if (stepsString.isNotEmpty()) {
-                listSteps.addAll(stepsString.split("|").toList())
-                taskStepAdapter.notifyDataSetChanged()
+            TextDateUtils.fillExpiryDateTexts(task.expiryDate, task.isRemember).let {
+                viewModel.dateText.value = it.first
+                viewModel.timeText.value = it.second
             }
         }
     }
 
-    private fun fillExpiryDateTexts(text: String, isRemember: Boolean) {
-        val format = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 23)
-        calendar.set(Calendar.MINUTE, 59)
-        if (isRemember) calendar.time = format.parse(text)
-        val textDate = dateFormat.format(calendar.time)
-        val textTime = timeFormat.format(calendar.time)
-        binding.checkboxRemember.isChecked = isRemember
-        viewModel.remember.value = isRemember
-        binding.tvExpiryDateEdit.text = textDate
-        binding.tvExpiryTimeEdit.text = textTime
-    }
-
-    private fun showInputDialog() {
-        AlertDialog.Builder(this).makeCustomDialog(this.layoutInflater) {
-            checkAdsCounter()
-            addStep(it)
-        }.show()
-    }
-
-    private fun showInputDialog(position: Int, text: String) {
-        AlertDialog.Builder(this).makeCustomDialog(this.layoutInflater, text) {
-            editStep(it, position)
-        }.show()
-    }
-
-    private fun addStep(text: String) {
-        if (text.isNotEmpty()) {
-            listSteps.add(text)
-            taskStepAdapter.notifyItemInserted(listSteps.size)
-        }
-    }
-
-    private fun editStep(text: String, position: Int) {
-        if (text.isNotEmpty()) {
-            listSteps[position - 1] = text
-            taskStepAdapter.notifyItemChanged(position - 1)
-        }
-    }
-
-    private fun showDatePicker() {
-        val currentDate = binding.tvExpiryDateEdit.text.toString()
-        Calendar.getInstance().makeCustomDatePicker(
-            this,
-            currentDate
-        ) {
-            loadDateOnTextView(it)
-        }.show()
-    }
-
-    private fun showTimePicker() {
-        val currentTime = binding.tvExpiryTimeEdit.text.toString()
-        Calendar.getInstance().makeCustomTimePicker(
-            this,
-            currentTime
-        ) {
-            loadTimeOnTextView(it)
-        }.show()
-    }
-
-    private fun loadDateOnTextView(calendar: Calendar = Calendar.getInstance()) {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val formattedDate = dateFormat.format(calendar.time)
-        binding.tvExpiryDateEdit.text = formattedDate
-    }
-
-    private fun loadTimeOnTextView(calendar: Calendar) {
-        val timeFormat = java.text.SimpleDateFormat("hh:mm a", Locale.getDefault())
-        val formattedTime = timeFormat.format(calendar.time)
-        binding.tvExpiryTimeEdit.text = formattedTime
-    }
-
     //                                                                          <- ads
     private fun initAds() {
-        InterstitialAd.load(
-            this,
-            "ca-app-pub-3940256099942544/1033173712",
-            AdRequest.Builder().build(),
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                }
+        consentManager.checkConsentAndLoadAds {
+            InterstitialAd.load(
+                this,
+                "ca-app-pub-3940256099942544/1033173712",
+                AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        interstitialAd = ad
+                    }
 
-                override fun onAdFailedToLoad(p0: LoadAdError) {
-                    interstitialAd = null
+                    override fun onAdFailedToLoad(p0: LoadAdError) {
+                        interstitialAd = null
+                    }
                 }
-            })
+            )
+        }
     }
 
     private fun checkAdsCounter() {
-        if (adsCounter == 3) {
+        if (adsCounter == 4) {
             adsCounter = 0
             showAds()
             initAds()

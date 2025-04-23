@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
-
     <application
         android:name=".TaskListApp"
         android:allowBackup="true"
@@ -27,20 +26,21 @@
         android:theme="@style/Theme.TaskList"
         tools:targetApi="34">
 
-        <service
-            android:name=".core.notifications.NotificationService"
-            android:enabled="true"
-            android:exported="false">
-        </service>
-
         <receiver
             android:name=".core.notifications.AlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".core.notifications.NotificationService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
 
         <activity
             android:name=".ui.view.EditTaskActivity"
@@ -59,7 +59,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-7090484402312159~9490634798" />
     </application>
 
 </manifest>

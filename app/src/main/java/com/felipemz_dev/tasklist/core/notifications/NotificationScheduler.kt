@@ -1,5 +1,6 @@
 package com.felipemz_dev.tasklist.core.notifications
 
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.NotificationChannel
@@ -15,6 +16,9 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.felipemz_dev.tasklist.R
+import com.felipemz_dev.tasklist.core.extensions.makeResourcesToast
+import com.felipemz_dev.tasklist.core.utils.PreferencesUtils.Companion.removeScheduledNotification
+import com.felipemz_dev.tasklist.core.utils.PreferencesUtils.Companion.saveScheduledNotification
 
 
 class NotificationScheduler(private val context: Context) {
@@ -35,11 +39,11 @@ class NotificationScheduler(private val context: Context) {
             if (manager.getNotificationChannel(TAG_CHANEL_ID) == null) {
                 val channel = NotificationChannel(
                     TAG_CHANEL_ID,
-                    "Task todo",
+                    context.getString(R.string.task_todo),
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
-                    description = "Remember your tasks"
+                    description = context.getString(R.string.remember_your_tasks)
                     enableVibration(true)
                     enableLights(true)
                     lightColor = context.getColor(R.color.apricot)
@@ -99,12 +103,16 @@ class NotificationScheduler(private val context: Context) {
         val pendingIntent = getPendingIntent(notificationTask)
         val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.set(AlarmManager.RTC_WAKEUP, notificationTask.timeNotification, pendingIntent)
+        saveScheduledNotification(context, notificationTask)
+        (context as Activity).makeResourcesToast(R.string.schedule_notification)
     }
 
     fun cancelNotification(notificationTask: NotificationTask) {
         val manager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         val pendingIntent = getPendingIntent(notificationTask)
         manager.cancel(pendingIntent)
+        removeScheduledNotification(context, notificationTask)
+        (context as Activity).makeResourcesToast(R.string.cancel_notification)
     }
 
     private fun getPendingIntent(notificationTask: NotificationTask): PendingIntent {

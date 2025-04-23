@@ -17,4 +17,8 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="chechBoxWhite">
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
 </resources>

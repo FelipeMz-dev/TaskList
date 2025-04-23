@@ -14,6 +14,7 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.felipemz_dev.tasklist.R
 import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler.Companion.TAG_CHANEL_ID
+import com.felipemz_dev.tasklist.core.utils.PreferencesUtils.Companion.removeScheduledNotification
 import com.felipemz_dev.tasklist.ui.view.MainActivity
 
 class NotificationService : Service() {
@@ -96,12 +97,14 @@ class NotificationService : Service() {
             )
             .setColorized(true)
             .setVibrate(longArrayOf(100, 200, 0, 200, 300, 0, 300, 400))
+
         //send notification
         notificationManager.notify(notificationTask.id.toInt(), notification.build())
         if (isVersionGreaterOreo){
             startForeground(1, notification.build())
             stopSelf()
         }
+        removeScheduledNotification(this, notificationTask)
         turnOnScreen()
     }
 

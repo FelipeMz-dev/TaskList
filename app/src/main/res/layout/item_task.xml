@@ -2,16 +2,19 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/surfie_green"
     app:cardCornerRadius="16dp"
-    app:cardUseCompatPadding="true">
+    app:cardElevation="8dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10sp"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -52,7 +55,7 @@
                 android:id="@+id/tvToday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
+                android:layout_marginHorizontal="12dp"
                 android:drawableStart="@drawable/round_warning_24"
                 android:drawablePadding="1dp"
                 android:drawableTint="@color/wheat"
@@ -68,6 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:alpha="0.6"
                 android:drawableEnd="@drawable/round_notifications_24"
                 android:drawablePadding="2dp"
                 android:gravity="end|center_vertical"

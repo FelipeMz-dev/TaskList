@@ -7,21 +7,24 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.SpinnerAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.felipemz_dev.tasklist.R
 import com.felipemz_dev.tasklist.core.ConsentManager
-import com.felipemz_dev.tasklist.core.TextDateUtils
+import com.felipemz_dev.tasklist.core.utils.PreferencesUtils
 import com.felipemz_dev.tasklist.core.extensions.addHintChangeStyle
 import com.felipemz_dev.tasklist.core.extensions.makeResourcesToast
-import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
 import com.felipemz_dev.tasklist.core.extensions.onSwipeItem
 import com.felipemz_dev.tasklist.core.extensions.showInputDialog
+import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
+import com.felipemz_dev.tasklist.core.utils.TextDateUtils
 import com.felipemz_dev.tasklist.core.viewmodelfactory.EditTaskViewModelFactory
 import com.felipemz_dev.tasklist.data.TaskRepository
 import com.felipemz_dev.tasklist.data.local.TaskDataBase
 import com.felipemz_dev.tasklist.databinding.ActivityEditTaskBinding
+import com.felipemz_dev.tasklist.ui.recyclerView.adapter.SpinnerAdapterColors
 import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskNoteAdapter
 import com.felipemz_dev.tasklist.ui.viewmodel.EditTaskViewModel
 import com.google.android.gms.ads.AdRequest
@@ -33,7 +36,6 @@ class EditTaskActivity : AppCompatActivity() {
 
     companion object {
         const val CODE_SELECT_IMAGE = 101
-        const val EDIT_NOTE_IMAGE = "EDIT_NOTE_IMAGE"
         const val TAG_DELIMITER = "-|-"
         const val TAG_IS_IMAGE_NOTE = "TL-H21.Image"
     }
@@ -60,6 +62,7 @@ class EditTaskActivity : AppCompatActivity() {
         initUI()
         initExtraData()
         initAds()
+        if (PreferencesUtils.isUserInitEdit(this)) setShowNoteHelp(true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,6 +82,7 @@ class EditTaskActivity : AppCompatActivity() {
     private fun initUI() {
         val context = this
         binding.apply {
+            spinnerColors.adapter = SpinnerAdapterColors(context)
             tvExpiryDateEdit.setOnClickListener { viewModel.showDatePicker(context) }
             tvExpiryTimeEdit.setOnClickListener { viewModel.showTimePicker(context) }
             btnCancelTaskEdit.setOnClickListener { finish() }
@@ -86,7 +90,11 @@ class EditTaskActivity : AppCompatActivity() {
                 editDataNote(position, text)
             }
             btnApplyTaskEdit.setOnClickListener {
-                if (viewModel.saveData(etTaskTextEdit.text.toString())) finish()
+                val isSaved = viewModel.saveData(
+                    text = etTaskTextEdit.text.toString(),
+                    color = spinnerColors.selectedItemPosition
+                )
+                if (isSaved) finish()
                 else makeResourcesToast(R.string.empty_text)
             }
             btnAddTaskNote.setOnClickListener {
@@ -98,6 +106,8 @@ class EditTaskActivity : AppCompatActivity() {
             btnAddTaskImage.setOnClickListener {
                 viewModel.openImageChooserIntent(context)
             }
+            viewInfo.setOnClickListener { setShowNoteHelp(true) }
+            btnApplyTakEdit.setOnClickListener { setShowNoteHelp(false) }
             rvTaskNotes.layoutManager = LinearLayoutManager(context)
             rvTaskNotes.adapter = taskStepAdapter
             rvTaskNotes.onSwipeItem {
@@ -125,11 +135,23 @@ class EditTaskActivity : AppCompatActivity() {
         }
     }
 
+    private fun setShowNoteHelp(isShow: Boolean) {
+        val visible = if (isShow) View.VISIBLE else View.GONE
+        val alpha = if (isShow) 0.3f else 1f
+        binding.apply {
+            viewNoteHelp.visibility = visible
+            llButtonsEditTask.alpha = alpha
+            llContentEditTask.alpha = alpha
+        }
+    }
+
     private fun editDataNote(position: Int, text: String) {
         if (text.contains(TAG_IS_IMAGE_NOTE)) {
             viewModel.openImageChooserIntent(this, position)
-        }else{
-            viewModel.editNote(text, position)
+        } else {
+            showInputDialog(text) {
+                viewModel.editNote(it, position)
+            }
         }
     }
 
@@ -159,6 +181,7 @@ class EditTaskActivity : AppCompatActivity() {
     private fun renderTask() {
         viewModel.task.observe(this) { task ->
             binding.etTaskTextEdit.setText(task.taskText)
+            binding.spinnerColors.setSelection(task.color)
             TextDateUtils.fillExpiryDateTexts(task.expiryDate, task.isRemember).let {
                 viewModel.dateText.value = it.first
                 viewModel.timeText.value = it.second
@@ -171,7 +194,7 @@ class EditTaskActivity : AppCompatActivity() {
         consentManager.checkConsentAndLoadAds {
             InterstitialAd.load(
                 this,
-                "ca-app-pub-3940256099942544/1033173712",
+                "ca-app-pub-7090484402312159/5429182422",
                 AdRequest.Builder().build(),
                 object : InterstitialAdLoadCallback() {
                     override fun onAdLoaded(ad: InterstitialAd) {
@@ -187,7 +210,7 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun checkAdsCounter() {
-        if (adsCounter == 4) {
+        if (adsCounter == 2) {
             adsCounter = 0
             showAds()
             initAds()

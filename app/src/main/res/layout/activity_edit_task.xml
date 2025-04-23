@@ -9,6 +9,7 @@
     tools:context=".ui.view.EditTaskActivity">
 
     <ScrollView
+        android:id="@+id/llContentEditTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/llButtonsEditTask"
@@ -21,22 +22,43 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="30dp"
-                android:text="@string/edit_activity"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/edit_activity"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/viewInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/info"
+                    android:textColor="@color/apricot"
+                    android:textSize="50sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tlTaskTextEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:elevation="5dp"
                 android:layout_marginHorizontal="16dp"
-                android:background="@android:drawable/editbox_background_normal"
+                android:background="@drawable/background_rounded"
                 android:backgroundTint="@color/ziggurat"
                 android:gravity="center_vertical"
                 android:textColorHint="@color/tradewind">
@@ -46,105 +68,154 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:background="@color/ziggurat"
+                    android:background="@drawable/background_rounded"
+                    android:backgroundTint="@color/ziggurat"
                     android:ems="10"
                     android:gravity="center_vertical"
                     android:hint="@string/write_your_task"
                     android:inputType="textCapSentences"
                     android:maxLength="255"
                     android:textColor="@color/surfie_green"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/checkboxRemember"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/remember"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    app:buttonTint="@color/white" />
-
-                <TextView
-                    android:id="@+id/tvExpiredReport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="18dp"
-                    android:drawablePadding="2dp"
-                    android:gravity="end"
-                    android:text="@string/str_expired"
-                    android:textColor="@color/wheat"
-                    android:textSize="20sp"
-                    android:visibility="gone"
-                    app:drawableStartCompat="@drawable/baseline_report_24" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:elevation="5dp"
                 android:layout_marginBottom="22dp"
-                android:orientation="horizontal">
+                android:background="@drawable/background_rounded"
+                android:backgroundTint="@color/ziggurat"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/tvExpiryDateEdit"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_weight="1.15"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat"
-                    android:gravity="center"
-                    android:textColor="@color/surfie_green"
-                    android:textSize="18sp"
-                    app:drawableEndCompat="@drawable/baseline_calendar_month_24"
-                    app:drawableTint="@color/surfie_green"
-                    tools:text="27/07/2023" />
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvExpiryTimeEdit"
-                    android:layout_width="0dp"
+                    <CheckBox
+                        android:id="@+id/checkboxRemember"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="@string/remember"
+                        android:textColor="@color/surfie_green"
+                        android:textSize="20sp"
+                        android:theme="@style/chechBoxWhite"
+                        app:buttonTint="@color/surfie_green" />
+
+                    <TextView
+                        android:id="@+id/tvExpiredReport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="18dp"
+                        android:drawablePadding="2dp"
+                        android:gravity="end"
+                        android:text="@string/str_expired"
+                        android:textColor="@color/wheat"
+                        android:textSize="20sp"
+                        android:visibility="visible"
+                        app:drawableStartCompat="@drawable/baseline_report_24" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat"
-                    android:gravity="center"
-                    android:textColor="@color/surfie_green"
-                    android:textSize="18sp"
-                    app:drawableEndCompat="@drawable/baseline_access_time_24"
-                    app:drawableTint="@color/surfie_green"
-                    tools:text="04:00 PM" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvExpiryDateEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.15"
+                        android:background="@drawable/background_rounded"
+                        android:gravity="center"
+                        android:paddingVertical="4dp"
+                        android:paddingEnd="4dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:drawableEndCompat="@drawable/baseline_calendar_month_24"
+                        app:drawableTint="@color/white"
+                        tools:text="27/07/2023" />
+
+                    <TextView
+                        android:id="@+id/tvExpiryTimeEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_rounded"
+                        android:gravity="center"
+                        android:paddingVertical="4dp"
+                        android:paddingEnd="4dp"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:drawableEndCompat="@drawable/baseline_access_time_24"
+                        app:drawableTint="@color/white"
+                        tools:text="04:00 PM" />
+
+                </LinearLayout>
 
             </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:elevation="5dp"
+            android:layout_marginBottom="22dp"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/ziggurat"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:gravity="center_vertical"
+                android:text="@string/color"
+                android:textColor="@color/surfie_green"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spinnerColors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"/>
+
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:background="@android:drawable/editbox_background_normal"
+                android:elevation="5dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/background_rounded"
                 android:backgroundTint="@color/ziggurat"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:gravity="center_vertical"
-                    android:text="@string/grades"
+                    android:text="@string/notes"
                     android:textColor="@color/surfie_green"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -161,9 +232,7 @@
                     android:id="@+id/rvTaskNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:backgroundTint="@color/ziggurat" />
+                    android:layout_margin="2dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,33 +275,92 @@
         android:layout_alignParentBottom="true"
         android:background="@color/tradewind"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCancelTaskEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
+            android:paddingEnd="5dp"
+            android:background="@drawable/background_rounded"
             android:backgroundTint="@color/apricot"
             android:drawableEnd="@drawable/round_close_24"
+            android:elevation="10dp"
             android:text="@string/cancel"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnApplyTaskEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:paddingEnd="5dp"
+            android:background="@drawable/background_rounded"
             android:backgroundTint="@color/apricot"
             android:drawableEnd="@drawable/round_check_24"
+            android:elevation="10dp"
             android:text="@string/apply"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/viewNoteHelp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="60dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/undraw_notify_re_65on" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/wheat"
+            android:elevation="10dp"
+            android:padding="15dp"
+            android:text="@string/note_help_edittask"
+            android:textColor="@color/surfie_green"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnApplyTakEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/apricot"
+            android:elevation="10dp"
+            android:text="Ok"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 </RelativeLayout>

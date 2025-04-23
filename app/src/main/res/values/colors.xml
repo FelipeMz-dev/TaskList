@@ -8,4 +8,12 @@
     <color name="wheat">#f6e8b1</color>
     <color name="apricot">#ed8b64</color>
 
+    <color name="red">#E72424</color>
+    <color name="green">#11D011</color>
+    <color name="blue">#2B2BF0</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="purple">#8D07A8</color>
+    <color name="orange">#F66F16</color>
+    <color name="pink">#F25F96</color>
+    <color name="cyan">#10EDDA</color>
 </resources>

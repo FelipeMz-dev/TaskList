@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">Task List</string>
     <string name="edit_activity">Edit task</string>
-    <string name="write_your_task">Write your task</string>
+    <string name="write_your_task">Your task</string>
     <string name="hint_do_the_homework">Do the homework</string>
     <string name="date_of_expiry">Date of expiry</string>Grades
-    <string name="grades">Notes:</string>
+    <string name="notes">Notes:</string>
+    <string name="color">Color:</string>
     <string name="hint_enter_text_here">Enter text here</string>
-    <string name="new_step">New Step</string>
+    <string name="new_note">Note:</string>
     <string name="add">Add</string>
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
@@ -17,11 +18,11 @@
     <string name="task_deleted">Task deleted</string>
     <string name="empty_text">Empty text</string>
     <string name="accept">Accept</string>
-    <string name="add_your_task_here">Add your task here ➜</string>
+    <string name="add_your_task_here">Add your task here</string>
     <string name="task_reminder">Task reminder</string>
-    <string name="filter_here">️Filter here</string>
+    <string name="filter_here">Group the list\nof to do and done</string>
     <string name="remember">Remember</string>
-    <string name="undefined">Undefined</string>
+    <string name="undefined">Without notification</string>
     <string name="advertisements">advertisements</string>
     <string name="add_note">Add Note</string>
     <string name="select_image">Select image</string>
@@ -32,17 +33,41 @@
     <string name="body_enable_notifications">To receive reminder of your tasks, please enable notifications for this app.</string>
     <string name="str_enable">Enable</string>
     <string name="have_you_already_done_it">Have you already done it?</string>
-    <string name="dialog_confirm_delete">Are you sure you want to delete this task?</string>
-    <string name="dialog_check_done_task">You have done the task!</string>
+    <string name="dialog_confirm_delete">You want delete task?</string>
+    <string name="dialog_check_done_task">You have done the task?</string>
     <string name="dialog_button_false_alarm">False Alarm</string>
     <string name="dialog_button_done">Done</string>
     <string name="dialog_before">before</string>
     <string name="dialog_after">after</string>
     <string name="confirm">Confirm</string>
     <string name="delete_task">Delete Task</string>
+    <string name="note_help_edittask">• Write your task to do.\n\n• Pick to reminder box and\n schedule a notification.\n\n• Add notes or images\n to remember.</string>
+    <string name="note_help_main">• Put your tasks in the list.\n\n• Pick the check box when\n you finish tasks.\n\n• Drag and drop from the\n pasted tasks list.</string>
+    <string name="ok">OK</string>
+    <string name="info">!</string>
+    <string name="empty_list">Empty list</string>
+    <string name="days">Days</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="just_now">Just now</string>
+    <string name="schedule_notification">Scheduled Notification</string>
+    <string name="cancel_notification">Canceled Notification</string>
+    <string name="remember_your_tasks">Remember your tasks</string>
+    <string name="task_todo">Task todo</string>
+    <string name="already_you_have_done">You have already done it</string>
+    <string name="not_you_have_done">You have not done it</string>
     <string-array name="filters">
         <item>ALL</item>
         <item>TODO</item>
         <item>DONE</item>
     </string-array>
+    <string name="color_default">default</string>
+    <string name="color_red">red</string>
+    <string name="color_green">green</string>
+    <string name="color_blue">blue</string>
+    <string name="color_yellow">yellow</string>
+    <string name="color_purple">purple</string>
+    <string name="color_oranfe">oranfe</string>
+    <string name="color_pink">pink</string>
+    <string name="color_cyan">cyan</string>
 </resources>

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.provider.MediaStore
 import com.felipemz_dev.tasklist.R
-import com.felipemz_dev.tasklist.ui.view.EditTaskActivity.Companion.EDIT_NOTE_IMAGE
 
 class PikerImageLoader {
 

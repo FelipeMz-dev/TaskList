@@ -5,20 +5,19 @@ import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.felipemz_dev.tasklist.R
 import com.felipemz_dev.tasklist.core.ConsentManager
 import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
 import com.felipemz_dev.tasklist.core.FinalSpaceItemDecoration
+import com.felipemz_dev.tasklist.core.utils.PreferencesUtils
 import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskAdapter
 import com.felipemz_dev.tasklist.data.local.TaskDataBase
 import com.felipemz_dev.tasklist.data.TaskRepository
 import com.felipemz_dev.tasklist.ui.viewmodel.MainViewModel
 import com.felipemz_dev.tasklist.core.viewmodelfactory.MainViewModelFactory
 import com.felipemz_dev.tasklist.core.extensions.getCircularIndex
-import com.felipemz_dev.tasklist.core.extensions.makeResourcesToast
 import com.felipemz_dev.tasklist.ui.recyclerView.viewholder.TaskViewHolder
 import com.felipemz_dev.tasklist.core.extensions.onSwipeItem
 import com.felipemz_dev.tasklist.core.extensions.showDialogDelete
@@ -58,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.setAlarmHelper(alarmHelper)
         initUI()
         initAds()
+        if (PreferencesUtils.isUserInitMain(this)) setShowNoteHelp(true)
         viewModel.isLoading.observe(this) {
             if (!it) initExtraData()
         }
@@ -74,9 +74,11 @@ class MainActivity : AppCompatActivity() {
                         ACTION_CHECK_DONE -> {
                             updateItem(task)
                         }
+
                         ACTION_DELETE_TASK -> {
                             deleteItem(task)
                         }
+
                         ACTION_EDIT_TASK -> {
                             goEditTaskActivity(id)
                         }
@@ -95,6 +97,8 @@ class MainActivity : AppCompatActivity() {
             btnFilter.setOnClickListener { onChangeFilter() }
             fabAddTask.setOnClickListener { goEditTaskActivity() }
             rvTasks.addItemDecoration(FinalSpaceItemDecoration(150))
+            viewInfo.setOnClickListener { setShowNoteHelp(true) }
+            btnApplyTakEdit.setOnClickListener { setShowNoteHelp(false) }
             rvTasks.layoutManager = LinearLayoutManager(context)
             rvTasks.adapter = taskAdapter
             rvTasks.onSwipeItem { deleteItem((it as TaskViewHolder).getTask()) }
@@ -104,14 +108,27 @@ class MainActivity : AppCompatActivity() {
             }
             viewModel.isEmpty.observe(context) {
                 ivEmptyList.visibility = if (it) View.VISIBLE else View.GONE
-                tvAddTaskIndication.visibility = if (it) View.VISIBLE else View.GONE
-                tvFilterHereIndication.visibility = if (it) View.VISIBLE else View.GONE
+                tvEmptyList.visibility = if (it) View.VISIBLE else View.GONE
             }
         }
     }
 
+    private fun setShowNoteHelp(isShow: Boolean) {
+        val visible = if (isShow) View.VISIBLE else View.GONE
+        val alpha = if (isShow) 0.3f else 1f
+        binding.apply {
+            viewNoteHelp.visibility = visible
+            tvFilterHereIndication.visibility = visible
+            tvAddTaskIndication.visibility = visible
+            fabAddTask.alpha = alpha
+            ivEmptyList.alpha = alpha
+            llContentTaskList.alpha = alpha
+            tvEmptyList.alpha = alpha
+        }
+    }
+
     private fun deleteItem(task: TaskEntity) {
-        showDialogDelete(task.taskText) {
+        showDialogDelete(task.taskText, task.done) {
             if (it) viewModel.deleteData(task)
             else onReloadFilter()
         }
@@ -120,13 +137,19 @@ class MainActivity : AppCompatActivity() {
     private fun updateItem(item: TaskEntity) {
         if (item.done) {
             viewModel.updateData(item)
-        } else showDialogDoneTask(item.taskText) {
-            if (it) viewModel.updateData(item)
-            else onReloadFilter()
+        } else {
+            if (item.isRemember) showDialogDoneTask(item.taskText, item.expiryDate) {
+                if (it) viewModel.updateData(item)
+                else onReloadFilter()
+            } else showDialogDoneTask(item.taskText) {
+                if (it) viewModel.updateData(item)
+                else onReloadFilter()
+            }
         }
     }
 
     private fun goEditTaskActivity(id: Long? = null) {
+        if (binding.viewNoteHelp.visibility == View.VISIBLE) return
         val intent = Intent(this, EditTaskActivity::class.java)
         if (id != null) intent.putExtra("id_task", id)
         startActivity(intent)
@@ -165,12 +188,14 @@ class MainActivity : AppCompatActivity() {
         binding.adBanner.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 super.onAdLoaded()
-                binding.adView.visibility = View.VISIBLE
+                binding.tvAds.visibility = View.VISIBLE
+                binding.adBanner.visibility = View.VISIBLE
             }
 
             override fun onAdClosed() {
                 super.onAdClosed()
-                binding.adView.visibility = View.GONE
+                binding.tvAds.visibility = View.GONE
+                binding.adBanner.visibility = View.GONE
                 initAds()
             }
         }

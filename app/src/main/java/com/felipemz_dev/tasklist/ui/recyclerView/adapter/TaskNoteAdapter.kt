@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.felipemz_dev.tasklist.core.ImageUtils
+import com.felipemz_dev.tasklist.core.utils.ImageUtils
 import com.felipemz_dev.tasklist.R
 import com.felipemz_dev.tasklist.ui.view.EditTaskActivity
 

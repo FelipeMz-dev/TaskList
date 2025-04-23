@@ -7,13 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.felipemz_dev.tasklist.core.ImageUtils
 import com.felipemz_dev.tasklist.core.PikerImageLoader
-import com.felipemz_dev.tasklist.core.TextDateUtils
 import com.felipemz_dev.tasklist.core.extensions.makeCustomDatePicker
 import com.felipemz_dev.tasklist.core.extensions.makeCustomTimePicker
 import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
 import com.felipemz_dev.tasklist.core.notifications.toNotificationTask
+import com.felipemz_dev.tasklist.core.utils.ImageUtils
+import com.felipemz_dev.tasklist.core.utils.TextDateUtils
 import com.felipemz_dev.tasklist.data.TaskRepository
 import com.felipemz_dev.tasklist.data.local.TaskEntity
 import com.felipemz_dev.tasklist.ui.recyclerView.adapter.TaskNoteAdapter
@@ -27,6 +27,14 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
     val task: LiveData<TaskEntity> get() = _task
     val remember = MutableLiveData(false)
 
+    private val imagePositionSelected = MutableLiveData(null as Int?)
+
+    private var _listNote = MutableLiveData(emptyList<String>())
+    val listNote: LiveData<List<String>> get() = _listNote
+
+    val dateText = MutableLiveData("")
+    val timeText = MutableLiveData("")
+
     private var alarmHelper: NotificationScheduler? = null
     fun setAlarmHelper(alarmHelper: NotificationScheduler) {
         this.alarmHelper = alarmHelper
@@ -35,7 +43,7 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
     fun getItemData(id: Long) {
         viewModelScope.launch {
             val value = repository.getItemData(id)
-            _task.value = value
+            _task.value = value?: TaskEntity()
             _listNote.value = value?.listSteps?.takeIf {
                 it.isNotEmpty()
             }?.split(EditTaskActivity.TAG_DELIMITER) ?: emptyList()
@@ -43,7 +51,10 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun saveData(text: String) : Boolean {
+    fun saveData(
+        text: String,
+        color: Int
+    ): Boolean {
         val expiryDate = "${dateText.value} ${timeText.value}"
         val taskText = text.trim().ifEmpty { return false }
         val newListNote = _listNote.value?.joinToString(EditTaskActivity.TAG_DELIMITER)
@@ -53,7 +64,8 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
                 taskText = taskText,
                 expiryDate = newExpiryDate,
                 isRemember = remember.value == true,
-                listSteps = newListNote ?: ""
+                listSteps = newListNote.orEmpty(),
+                color = color
             )
             insertData(newTask)
         } else {
@@ -61,7 +73,8 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
                 taskText = taskText,
                 expiryDate = expiryDate,
                 isRemember = remember.value == true,
-                listSteps = newListNote ?: ""
+                listSteps = newListNote.orEmpty(),
+                color = color
             )
             updateData(newTask)
         }
@@ -76,22 +89,34 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     private fun updateData(data: TaskEntity) {
         viewModelScope.launch {
+            updateNotification(data)
             repository.updateData(data)
-            if (data.isRemember) {
-                data.toNotificationTask("").let {
-                    if (!TextDateUtils.isDateExpired(dateText.value!!, timeText.value!!)) {
-                        alarmHelper?.scheduleNotification(it)
-                        alarmHelper?.requestEnableNotificationChanel()
-                    }
-                }
-            } else {
-                data.toNotificationTask("").let { alarmHelper?.cancelNotification(it) }
-            }
         }
     }
 
-    private var _listNote = MutableLiveData(emptyList<String>())
-    val listNote: LiveData<List<String>> get() = _listNote
+    private fun updateNotification(data: TaskEntity) {
+        if (data.done) return
+        if (data.isRemember) {
+            data.toNotificationTask("").let {
+                if (!TextDateUtils.isDateExpired(dateText.value!!, timeText.value!!)) {
+                    alarmHelper?.scheduleNotification(it)
+                    alarmHelper?.requestEnableNotificationChanel()
+                } else {
+                    task.value?.toNotificationTask("")?.let { oldTask ->
+                        if (!TextDateUtils.isDateExpired(oldTask.timeNotification)) {
+                            alarmHelper?.cancelNotification(it)
+                        }
+                    }
+                }
+            }
+        } else {
+            task.value?.toNotificationTask("")?.let { oldTask ->
+                if (!TextDateUtils.isDateExpired(oldTask.timeNotification)) {
+                    data.toNotificationTask("").let { alarmHelper?.cancelNotification(it) }
+                }
+            }
+        }
+    }
 
     fun addNote(text: String) {
         if (text.trim().isNotEmpty()) {
@@ -101,7 +126,10 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun editNote(text: String, position: Int) {
+    fun editNote(
+        text: String,
+        position: Int
+    ) {
         if (text.trim().isNotEmpty()) {
             _listNote.value = _listNote.value?.let {
                 it.toMutableList().apply { set(position, text) }
@@ -117,7 +145,10 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    private fun editNoteImage(image: Bitmap, position: Int) {
+    private fun editNoteImage(
+        image: Bitmap,
+        position: Int
+    ) {
         val imagePath = ImageUtils.saveBitmapToDirectory(image)
         if (imagePath != null) {
             val text = "${EditTaskActivity.TAG_IS_IMAGE_NOTE}$imagePath"
@@ -132,9 +163,10 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    private val imagePositionSelected = MutableLiveData(null as Int?)
-
-    fun openImageChooserIntent(activity: Activity, position: Int? = null) {
+    fun openImageChooserIntent(
+        activity: Activity,
+        position: Int? = null
+    ) {
         imagePositionSelected.value = position
         PikerImageLoader.showPicker(activity) {
             activity.startActivityForResult(it, EditTaskActivity.CODE_SELECT_IMAGE)
@@ -148,11 +180,8 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
         } else addNoteImage(imageBitmap)
     }
 
-    val dateText = MutableLiveData("")
-    val timeText = MutableLiveData("")
-
     fun showDatePicker(context: Context) {
-        dateText.value?.let {text ->
+        dateText.value?.let { text ->
             Calendar.getInstance().makeCustomDatePicker(context, text) {
                 dateText.value = TextDateUtils.loadDateOnTextView(it)
             }.show()
@@ -160,7 +189,7 @@ class EditTaskViewModel(private val repository: TaskRepository) : ViewModel() {
     }
 
     fun showTimePicker(context: Context) {
-        timeText.value?.let {text ->
+        timeText.value?.let { text ->
             Calendar.getInstance().makeCustomTimePicker(context, text) {
                 timeText.value = TextDateUtils.loadTimeOnTextView(it)
             }.show()

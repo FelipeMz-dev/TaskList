@@ -9,59 +9,66 @@
     tools:context=".ui.view.MainActivity">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvAds"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:layout_gravity="center_horizontal"
+            android:letterSpacing="0.25"
+            android:text="@string/advertisements"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:letterSpacing="0.25"
-                android:text="@string/advertisements"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adBanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-7090484402312159/8502068321" />
 
-            <com.google.android.gms.ads.AdView
-                android:id="@+id/adBanner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+    </LinearLayout>
 
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llContentTaskList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@+id/adView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="30dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
-                android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <Space
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
@@ -74,20 +81,22 @@
                 android:textStyle="bold"
                 tools:text="TODO" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/viewInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="-2dp"
+                android:layout_marginEnd="-5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/info"
+                android:textColor="@color/apricot"
+                android:textSize="50sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvFilterHereIndication"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="20dp"
-            android:drawableTop="@drawable/turn_sharp_right"
-            android:gravity="center"
-            android:text="@string/filter_here"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:visibility="gone" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTasks"
@@ -96,34 +105,39 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/ivEmptyList"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="50dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="image add task"
-        android:src="@drawable/draw_create_list"
-        android:visibility="gone" />
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvAddTaskIndication"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/fabAddTask"
-        android:layout_alignEnd="@id/fabAddTask"
-        android:layout_alignBottom="@id/fabAddTask"
-        android:layout_alignParentStart="true"
-        android:gravity="center"
-        android:text="@string/add_your_task_here"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:visibility="gone" />
+        <ImageView
+            android:id="@+id/ivEmptyList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="50dp"
+            android:src="@drawable/draw_create_list"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvEmptyList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:letterSpacing="0.5"
+            android:text="@string/empty_list"
+            android:textColor="@color/wheat"
+            android:textSize="20sp"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddTask"
@@ -131,8 +145,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="32dp"
-        android:src="@android:drawable/ic_input_add"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/round_add_24"
         app:backgroundTint="@color/apricot"
         app:fabSize="normal"
         app:tint="@color/white" />
@@ -141,10 +157,99 @@
         android:id="@+id/pbLoading"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_below="@id/adView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="100dp" />
+
+    <TextView
+        android:id="@+id/tvFilterHereIndication"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/adView"
+        android:layout_alignParentStart="true"
+        android:layout_marginVertical="30dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/background_rounded"
+        android:backgroundTint="@color/tradewind"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/wheat"
+        android:padding="5dp"
+        android:text="@string/filter_here"
+        android:textColor="@color/wheat"
+        android:textSize="16sp"
+        android:visibility="gone"
+        ads:drawableEndCompat="@drawable/baseline_arrow_right_alt_24"
+        ads:drawableTint="@color/wheat" />
+
+    <TextView
+        android:id="@+id/tvAddTaskIndication"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/fabAddTask"
+        android:layout_alignBottom="@id/fabAddTask"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/fabAddTask"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/wheat"
+        android:gravity="end|center_vertical"
+        android:text="@string/add_your_task_here"
+        android:textColor="@color/wheat"
+        android:textSize="20sp"
+        android:visibility="gone"
+        ads:drawableEndCompat="@drawable/baseline_arrow_right_alt_24"
+        ads:drawableTint="@color/wheat" />
+
+    <LinearLayout
+        android:id="@+id/viewNoteHelp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@+id/adView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="60dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/undraw_notify_re_65on" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/wheat"
+            android:elevation="10dp"
+            android:padding="15dp"
+            android:text="@string/note_help_main"
+            android:textColor="@color/surfie_green"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnApplyTakEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/apricot"
+            android:elevation="10dp"
+            android:text="@string/ok"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </RelativeLayout>

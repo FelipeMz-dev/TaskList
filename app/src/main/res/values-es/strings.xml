@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Task List</string>
-    <string name="edit_activity">Edit task</string>
-    <string name="write_your_task">Escribe tu tarea</string>
+    <string name="app_name">Lista de tareas</string>
+    <string name="edit_activity">Editor de tareas</string>
+    <string name="write_your_task">Tu tarea</string>
     <string name="hint_do_the_homework">Hacer mi tarea</string>
     <string name="date_of_expiry">Fecha de caducación</string>
-    <string name="grades">Notas:</string>
+    <string name="notes">Notas:</string>
+    <string name="color">Color:</string>
     <string name="hint_enter_text_here">Escribe el texto aquí</string>
-    <string name="new_step">Nuevo paso</string>
+    <string name="new_note">Nota:</string>
     <string name="add">Añadir</string>
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>
@@ -16,16 +17,16 @@
     <string name="task_saved">Tarea guardada</string>
     <string name="task_updated">Tarea Actualizada</string>
     <string name="task_deleted">Tarea Borrada</string>
-    <string name="empty_text">Texto vacio</string>
+    <string name="empty_text">Texto vacío</string>
     <string name="accept">Aceptar</string>
-    <string name="add_your_task_here">Añade tus tareas aquí ➜</string>
-    <string name="filter_here">️Filtra aquí</string>
+    <string name="add_your_task_here">Añade tus tareas aquí</string>
+    <string name="filter_here">️Clasifica la lista\npor hacer y hechas</string>
     <string name="task_reminder">Recordatorio de tarea</string>
     <string name="remember">Recordar</string>
-    <string name="undefined">Indefinido</string>
+    <string name="undefined">Sin notificación</string>
     <string name="advertisements">Publicidad</string>
     <string name="add_note">Añadir</string>
-    <string name="select_image">Seleccione la imagen</string>
+    <string name="select_image">Selecciona la imagen</string>
     <string name="str_today">HOY</string>
     <string name="str_expired">VENCIÓ</string>
     <string name="error_load_image">error loading image</string>
@@ -33,17 +34,41 @@
     <string name="body_enable_notifications">Para recibir recordatorios de tus tareas, por favor habilite las notificaciones de esta aplicación.</string>
     <string name="str_enable">Habilitar</string>
     <string name="have_you_already_done_it">Ya lo has hecho?</string>
-    <string name="dialog_confirm_delete">seguro que quieres quitar la tarea de la lista?</string>
-    <string name="dialog_check_done_task">Has Completado la tarea!</string>
+    <string name="dialog_confirm_delete">Quieres quitar la tarea?</string>
+    <string name="dialog_check_done_task">Has Completado la tarea?</string>
     <string name="dialog_button_false_alarm">Falsa Alarma</string>
     <string name="dialog_button_done">Hecho</string>
     <string name="dialog_before">antes</string>
     <string name="dialog_after">después</string>
     <string name="confirm">Confirmar</string>
     <string name="delete_task">Borrar Tarea</string>
+    <string name="note_help_edittask">• Escribe tu tarea por hacer.\n\n• Dale a la caja de recordar y\n programa una notificación\n\n• Añade notas o imágenes\n para recordarlas.</string>
+    <string name="note_help_main">• Pon tus tareas en la lista.\n\n• Dale click a la caja cuando\n termines las tareas.\n\n• Arrastra y borra de la lista\n  tus tareas pasadas.</string>
+    <string name="ok">Ok</string>
+    <string name="info">!</string>
+    <string name="empty_list">Lista vacía</string>
+    <string name="days">Días</string>
+    <string name="hours">Horas</string>
+    <string name="minutes">Minutos</string>
+    <string name="just_now">Justo ahora</string>
+    <string name="schedule_notification">Notificación Programada</string>
+    <string name="cancel_notification">Notificación Cancelada</string>
+    <string name="remember_your_tasks">Recordar tus tareas</string>
+    <string name="task_todo">Tareas por hacer</string>
+    <string name="already_you_have_done">Ya la has completado</string>
+    <string name="not_you_have_done">No la has completado</string>
     <string-array name="filters">
-        <item>TODOS</item>
+        <item>TODAS</item>
         <item>HACER</item>
         <item>HECHO</item>
     </string-array>
+    <string name="color_default">por defecto</string>
+    <string name="color_red">color rojo</string>
+    <string name="color_green">color verde</string>
+    <string name="color_blue">color azul</string>
+    <string name="color_yellow">color amarillo</string>
+    <string name="color_purple">color purpura</string>
+    <string name="color_oranfe">color naranja</string>
+    <string name="color_pink">color rosa</string>
+    <string name="color_cyan">color aguamarina</string>
 </resources>

@@ -8,8 +8,10 @@ import androidx.room.PrimaryKey
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Long = 0,
-    @ColumnInfo(name = "taskText") var taskText: String,
-    @ColumnInfo(name = "expiryDate") var expiryDate: String,
-    @ColumnInfo(name = "isRemember") var isRemember: Boolean,
-    @ColumnInfo(name = "ListSteps") var listSteps: String,
-    @ColumnInfo(name = "done") var done: Boolean = false)
+    @ColumnInfo(name = "taskText") var taskText: String = "",
+    @ColumnInfo(name = "expiryDate") var expiryDate: String = "",
+    @ColumnInfo(name = "isRemember") var isRemember: Boolean = false,
+    @ColumnInfo(name = "ListSteps") var listSteps: String = "",
+    @ColumnInfo(name = "done") var done: Boolean = false,
+    @ColumnInfo(name = "color") var color: Int = 0
+)

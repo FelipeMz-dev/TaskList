@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.felipemz_dev.tasklist.core.utils.TextDateUtils
 import com.felipemz_dev.tasklist.core.notifications.NotificationScheduler
 import com.felipemz_dev.tasklist.core.notifications.toNotificationTask
 import com.felipemz_dev.tasklist.data.TaskRepository
@@ -30,8 +31,8 @@ class MainViewModel(private val repository: TaskRepository) : ViewModel() {
                 if (flagInit) {
                     val task = taskList.value?.let { findNewTask(newList, it) }
                     if (task != null) {
-                        if (task.isRemember) {
-                            task.toNotificationTask("").let {
+                        if (task.isRemember) task.toNotificationTask("").let {
+                            if (!TextDateUtils.isDateExpired(it.timeNotification)) {
                                 alarmHelper?.scheduleNotification(it)
                                 alarmHelper?.requestEnableNotificationChanel()
                             }
@@ -45,7 +46,7 @@ class MainViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    private fun cancelLoading(){
+    private fun cancelLoading() {
         if (isLoading.value == true) isLoading.value = false
     }
 
@@ -88,14 +89,35 @@ class MainViewModel(private val repository: TaskRepository) : ViewModel() {
         val newData = data.copy(done = !data.done)
         viewModelScope.launch {
             repository.updateData(newData)
+            if (newData.done) {
+                if (newData.isRemember) {
+                    newData.toNotificationTask("").let {
+                        if (!TextDateUtils.isDateExpired(it.timeNotification)) {
+                            alarmHelper?.cancelNotification(it)
+                        }
+                    }
+                }
+            } else {
+                if (newData.isRemember) {
+                    newData.toNotificationTask("").let {
+                        if (!TextDateUtils.isDateExpired(it.timeNotification)) {
+                            alarmHelper?.scheduleNotification(it)
+                        }
+                    }
+                }
+            }
         }
     }
 
     fun deleteData(data: TaskEntity) {
         viewModelScope.launch {
             repository.deleteData(data)
-            if (data.isRemember) {
-                data.toNotificationTask("").let { alarmHelper?.cancelNotification(it) }
+            if (data.isRemember && !data.done) {
+                data.toNotificationTask("").let {
+                    if (!TextDateUtils.isDateExpired(it.timeNotification)) {
+                        alarmHelper?.cancelNotification(it)
+                    }
+                }
             }
         }
     }
